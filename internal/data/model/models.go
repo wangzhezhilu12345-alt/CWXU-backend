@@ -43,14 +43,14 @@ type Student struct {
 // Course 教学班
 type Course struct {
 	gorm.Model
-	Status int    `json:"status" gorm:"comment:课程状态 1-进行中 2-已结课"`
-	Name   string `json:"name" gorm:"size:64;comment:课程名称"`
-
+	Status     int    `json:"status" gorm:"comment:课程状态 1-进行中 2-已结课"`
+	CourseName string `json:"name" gorm:"size:64;comment:课程名称"`
+	ClassName  string `json:"class_name" gorm:"unique;size:128;comment:班级名称"`
 	// 老师和课程：多对多
 	Teachers []Teacher `json:"teachers" gorm:"many2many:course_teachers;comment:授课教师"`
 
 	// 【关键修改点】：学生和课程：多对多。必须加 many2many 标签，指定中间表名为 course_students
-	Students []Student `json:"students" gorm:"many2many:course_students;comment:班级学生"`
+	Students []Student `json:"students" gorm:"many2many:course_students;references:student_no;comment:班级学生"`
 
 	// 实时评分字段
 	EvaluationScore int `json:"evaluation_score" gorm:"default:0;comment:评教总分"`
@@ -63,11 +63,9 @@ type EvaluationDetail struct {
 	TaskId    uint `json:"task_id" gorm:"index;comment:评价任务id"`
 	CourseId  uint `json:"course_id" gorm:"index;comment:课程id"`
 	StudentId uint `json:"student_id" gorm:"index;comment:学生id"`
-
 	// 这里的实体引用主要用于 Preload 查询，不影响表结构生成
 	Course  Course  `json:"-" gorm:"foreignKey:CourseId"`
 	Student Student `json:"student" gorm:"foreignKey:StudentId"`
-
-	Detail string `json:"detail" gorm:"type:text;comment:学生评价的json信息"`
-	Score  int    `json:"score" gorm:"comment:本次评价折算后的总分"`
+	Detail  string  `json:"detail" gorm:"type:text;comment:学生评价的json信息"`
+	Score   int     `json:"score" gorm:"comment:本次评价折算后的总分"`
 }

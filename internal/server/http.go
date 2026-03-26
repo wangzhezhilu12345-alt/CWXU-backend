@@ -15,7 +15,9 @@ import (
 func NewHTTPServer(c *conf.Server,
 	studentService *base_info.StudentService,
 	teacherService *base_info.TeacherService,
-	logger log.Logger) *http.Server {
+	courseService *base_info.CourseService,
+	logger log.Logger,
+) *http.Server {
 	var opts = []http.ServerOption{
 		http.Middleware(
 			recovery.Recovery(),
@@ -35,6 +37,7 @@ func NewHTTPServer(c *conf.Server,
 	// 一些上传路由
 	b.POST("/student/import", studentService.Import)
 	b.POST("/teacher/import", teacherService.Import)
+	b.POST("/course/import", courseService.Import)
 	student_i.RegisterStudentHTTPServer(srv, studentService)
 	teacher_i.RegisterTeacherHTTPServer(srv, teacherService)
 	return srv

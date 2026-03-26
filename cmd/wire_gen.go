@@ -34,7 +34,10 @@ func wireApp(confServer *conf.Server, confData *conf.Data, logger log.Logger) (*
 	studentService := base_info2.NewStudentService(studentUseCase, baseInfoDal)
 	teacherUseCase := base_info.NewTeacherUseCase(baseInfoDal)
 	teacherService := base_info2.NewTeacherService(teacherUseCase, baseInfoDal)
-	httpServer := server.NewHTTPServer(confServer, studentService, teacherService, logger)
+	courseDal := dal.NewCourseDal(dataData)
+	courseUseCase := base_info.NewCourseUseCase(courseDal)
+	courseService := base_info2.NewCourseService(courseDal, courseUseCase)
+	httpServer := server.NewHTTPServer(confServer, studentService, teacherService, courseService, logger)
 	app := newApp(logger, httpServer)
 	return app, func() {
 		cleanup()
