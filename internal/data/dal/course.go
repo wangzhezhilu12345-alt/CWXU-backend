@@ -14,11 +14,18 @@ type CourseDal struct {
 	rdb *redis.Client
 }
 
+// Detail 获取课程详情
+func (c CourseDal) Detail(courseID uint) (*model.Course, error) {
+	course := model.Course{}
+	err := c.db.Where("id = ?", courseID).Preload("Teachers").Preload("Students").First(&course).Error
+	return &course, err
+}
+
 // CreateCourse 创建课程
 func (c CourseDal) CreateCourse(courseName, className string) (uint, error) {
 	// 班级名称是唯一的
 	cs := model.Course{
-		Status:     0,
+		Status:     1,
 		CourseName: courseName,
 		ClassName:  className,
 	}

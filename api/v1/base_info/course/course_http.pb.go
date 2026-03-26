@@ -19,14 +19,12 @@ var _ = binding.EncodeURL
 
 const _ = http.SupportPackageIsVersion1
 
-const OperationCourseChangeStatus = "/api.v1.base_info.course.Course/ChangeStatus"
 const OperationCourseDetail = "/api.v1.base_info.course.Course/Detail"
 const OperationCourseEdit = "/api.v1.base_info.course.Course/Edit"
 const OperationCourseList = "/api.v1.base_info.course.Course/List"
 
 type CourseHTTPServer interface {
-	ChangeStatus(context.Context, *GetCourseListReq) (*GetCourseListResp, error)
-	Detail(context.Context, *GetCourseListReq) (*GetCourseListResp, error)
+	Detail(context.Context, *GetCourseDetailReq) (*GetCourseDetailResp, error)
 	Edit(context.Context, *GetCourseListReq) (*GetCourseListResp, error)
 	List(context.Context, *GetCourseListReq) (*GetCourseListResp, error)
 }
@@ -35,7 +33,6 @@ func RegisterCourseHTTPServer(s *http.Server, srv CourseHTTPServer) {
 	r := s.Route("/")
 	r.GET("/api/v1/base-info/course/list", _Course_List0_HTTP_Handler(srv))
 	r.GET("/api/v1/base-info/course/detail", _Course_Detail0_HTTP_Handler(srv))
-	r.POST("/api/v1/base-info/course/change-status", _Course_ChangeStatus0_HTTP_Handler(srv))
 	r.POST("/api/v1/base-info/course/edit", _Course_Edit0_HTTP_Handler(srv))
 }
 
@@ -60,41 +57,19 @@ func _Course_List0_HTTP_Handler(srv CourseHTTPServer) func(ctx http.Context) err
 
 func _Course_Detail0_HTTP_Handler(srv CourseHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
-		var in GetCourseListReq
+		var in GetCourseDetailReq
 		if err := ctx.BindQuery(&in); err != nil {
 			return err
 		}
 		http.SetOperation(ctx, OperationCourseDetail)
 		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
-			return srv.Detail(ctx, req.(*GetCourseListReq))
+			return srv.Detail(ctx, req.(*GetCourseDetailReq))
 		})
 		out, err := h(ctx, &in)
 		if err != nil {
 			return err
 		}
-		reply := out.(*GetCourseListResp)
-		return ctx.Result(200, reply)
-	}
-}
-
-func _Course_ChangeStatus0_HTTP_Handler(srv CourseHTTPServer) func(ctx http.Context) error {
-	return func(ctx http.Context) error {
-		var in GetCourseListReq
-		if err := ctx.Bind(&in); err != nil {
-			return err
-		}
-		if err := ctx.BindQuery(&in); err != nil {
-			return err
-		}
-		http.SetOperation(ctx, OperationCourseChangeStatus)
-		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
-			return srv.ChangeStatus(ctx, req.(*GetCourseListReq))
-		})
-		out, err := h(ctx, &in)
-		if err != nil {
-			return err
-		}
-		reply := out.(*GetCourseListResp)
+		reply := out.(*GetCourseDetailResp)
 		return ctx.Result(200, reply)
 	}
 }
@@ -122,8 +97,7 @@ func _Course_Edit0_HTTP_Handler(srv CourseHTTPServer) func(ctx http.Context) err
 }
 
 type CourseHTTPClient interface {
-	ChangeStatus(ctx context.Context, req *GetCourseListReq, opts ...http.CallOption) (rsp *GetCourseListResp, err error)
-	Detail(ctx context.Context, req *GetCourseListReq, opts ...http.CallOption) (rsp *GetCourseListResp, err error)
+	Detail(ctx context.Context, req *GetCourseDetailReq, opts ...http.CallOption) (rsp *GetCourseDetailResp, err error)
 	Edit(ctx context.Context, req *GetCourseListReq, opts ...http.CallOption) (rsp *GetCourseListResp, err error)
 	List(ctx context.Context, req *GetCourseListReq, opts ...http.CallOption) (rsp *GetCourseListResp, err error)
 }
@@ -136,21 +110,8 @@ func NewCourseHTTPClient(client *http.Client) CourseHTTPClient {
 	return &CourseHTTPClientImpl{client}
 }
 
-func (c *CourseHTTPClientImpl) ChangeStatus(ctx context.Context, in *GetCourseListReq, opts ...http.CallOption) (*GetCourseListResp, error) {
-	var out GetCourseListResp
-	pattern := "/api/v1/base-info/course/change-status"
-	path := binding.EncodeURL(pattern, in, false)
-	opts = append(opts, http.Operation(OperationCourseChangeStatus))
-	opts = append(opts, http.PathTemplate(pattern))
-	err := c.cc.Invoke(ctx, "POST", path, in, &out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return &out, nil
-}
-
-func (c *CourseHTTPClientImpl) Detail(ctx context.Context, in *GetCourseListReq, opts ...http.CallOption) (*GetCourseListResp, error) {
-	var out GetCourseListResp
+func (c *CourseHTTPClientImpl) Detail(ctx context.Context, in *GetCourseDetailReq, opts ...http.CallOption) (*GetCourseDetailResp, error) {
+	var out GetCourseDetailResp
 	pattern := "/api/v1/base-info/course/detail"
 	path := binding.EncodeURL(pattern, in, true)
 	opts = append(opts, http.Operation(OperationCourseDetail))

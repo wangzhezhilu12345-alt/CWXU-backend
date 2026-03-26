@@ -3,6 +3,7 @@ package base_info
 import (
 	context "context"
 	"edu-evaluation-backed/api/v1/base_info/course"
+	student_i "edu-evaluation-backed/api/v1/base_info/student"
 	"edu-evaluation-backed/api/v1/base_info/teacher"
 	"edu-evaluation-backed/internal/biz/base_info"
 	"edu-evaluation-backed/internal/data/dal"
@@ -16,14 +17,39 @@ type CourseService struct {
 	courseUC  *base_info.CourseUseCase
 }
 
-func (c CourseService) ChangeStatus(ctx context.Context, req *course.GetCourseListReq) (*course.GetCourseListResp, error) {
-	//TODO implement me
-	panic("implement me")
-}
-
-func (c CourseService) Detail(ctx context.Context, req *course.GetCourseListReq) (*course.GetCourseListResp, error) {
-	//TODO implement me
-	panic("implement me")
+func (c CourseService) Detail(ctx context.Context, req *course.GetCourseDetailReq) (*course.GetCourseDetailResp, error) {
+	cs, err := c.courseDal.Detail(uint(req.CourseId))
+	if err != nil {
+		return nil, err
+	}
+	resp := &course.GetCourseDetailResp{
+		Message: "success",
+		Data: &course.CourseList{
+			Id:          uint32(cs.ID),
+			CourseName:  cs.CourseName,
+			ClassName:   cs.ClassName,
+			TeacherList: make([]*teacher_i.TeacherInfo, 0),
+			StudentList: make([]*student_i.StudentInfo, 0),
+			Status:      int32(cs.Status),
+		},
+	}
+	for _, t := range cs.Teachers {
+		resp.Data.TeacherList = append(resp.Data.TeacherList, &teacher_i.TeacherInfo{
+			Id:     uint32(t.ID),
+			Name:   t.Name,
+			WorkNo: t.WorkNo,
+			Email:  t.Email,
+		})
+	}
+	for _, s := range cs.Students {
+		resp.Data.StudentList = append(resp.Data.StudentList, &student_i.StudentInfo{
+			Id:        uint32(s.ID),
+			Name:      s.Name,
+			StudentNo: s.StudentNo,
+			Sex:       s.Sex,
+		})
+	}
+	return resp, nil
 }
 
 func (c CourseService) Edit(ctx context.Context, req *course.GetCourseListReq) (*course.GetCourseListResp, error) {
@@ -47,6 +73,7 @@ func (c CourseService) List(ctx context.Context, req *course.GetCourseListReq) (
 			CourseName:  c.CourseName,
 			ClassName:   c.ClassName,
 			TeacherList: make([]*teacher_i.TeacherInfo, 0),
+			Status:      int32(c.Status),
 		})
 		for _, t := range c.Teachers {
 			rsp.Data[len(rsp.Data)-1].TeacherList = append(rsp.Data[len(rsp.Data)-1].TeacherList, &teacher_i.TeacherInfo{

@@ -19,10 +19,9 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	Course_List_FullMethodName         = "/api.v1.base_info.course.Course/List"
-	Course_Detail_FullMethodName       = "/api.v1.base_info.course.Course/Detail"
-	Course_ChangeStatus_FullMethodName = "/api.v1.base_info.course.Course/ChangeStatus"
-	Course_Edit_FullMethodName         = "/api.v1.base_info.course.Course/Edit"
+	Course_List_FullMethodName   = "/api.v1.base_info.course.Course/List"
+	Course_Detail_FullMethodName = "/api.v1.base_info.course.Course/Detail"
+	Course_Edit_FullMethodName   = "/api.v1.base_info.course.Course/Edit"
 )
 
 // CourseClient is the client API for Course service.
@@ -30,8 +29,7 @@ const (
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type CourseClient interface {
 	List(ctx context.Context, in *GetCourseListReq, opts ...grpc.CallOption) (*GetCourseListResp, error)
-	Detail(ctx context.Context, in *GetCourseListReq, opts ...grpc.CallOption) (*GetCourseListResp, error)
-	ChangeStatus(ctx context.Context, in *GetCourseListReq, opts ...grpc.CallOption) (*GetCourseListResp, error)
+	Detail(ctx context.Context, in *GetCourseDetailReq, opts ...grpc.CallOption) (*GetCourseDetailResp, error)
 	Edit(ctx context.Context, in *GetCourseListReq, opts ...grpc.CallOption) (*GetCourseListResp, error)
 }
 
@@ -53,20 +51,10 @@ func (c *courseClient) List(ctx context.Context, in *GetCourseListReq, opts ...g
 	return out, nil
 }
 
-func (c *courseClient) Detail(ctx context.Context, in *GetCourseListReq, opts ...grpc.CallOption) (*GetCourseListResp, error) {
+func (c *courseClient) Detail(ctx context.Context, in *GetCourseDetailReq, opts ...grpc.CallOption) (*GetCourseDetailResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(GetCourseListResp)
+	out := new(GetCourseDetailResp)
 	err := c.cc.Invoke(ctx, Course_Detail_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *courseClient) ChangeStatus(ctx context.Context, in *GetCourseListReq, opts ...grpc.CallOption) (*GetCourseListResp, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(GetCourseListResp)
-	err := c.cc.Invoke(ctx, Course_ChangeStatus_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -88,8 +76,7 @@ func (c *courseClient) Edit(ctx context.Context, in *GetCourseListReq, opts ...g
 // for forward compatibility.
 type CourseServer interface {
 	List(context.Context, *GetCourseListReq) (*GetCourseListResp, error)
-	Detail(context.Context, *GetCourseListReq) (*GetCourseListResp, error)
-	ChangeStatus(context.Context, *GetCourseListReq) (*GetCourseListResp, error)
+	Detail(context.Context, *GetCourseDetailReq) (*GetCourseDetailResp, error)
 	Edit(context.Context, *GetCourseListReq) (*GetCourseListResp, error)
 	mustEmbedUnimplementedCourseServer()
 }
@@ -104,11 +91,8 @@ type UnimplementedCourseServer struct{}
 func (UnimplementedCourseServer) List(context.Context, *GetCourseListReq) (*GetCourseListResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method List not implemented")
 }
-func (UnimplementedCourseServer) Detail(context.Context, *GetCourseListReq) (*GetCourseListResp, error) {
+func (UnimplementedCourseServer) Detail(context.Context, *GetCourseDetailReq) (*GetCourseDetailResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method Detail not implemented")
-}
-func (UnimplementedCourseServer) ChangeStatus(context.Context, *GetCourseListReq) (*GetCourseListResp, error) {
-	return nil, status.Error(codes.Unimplemented, "method ChangeStatus not implemented")
 }
 func (UnimplementedCourseServer) Edit(context.Context, *GetCourseListReq) (*GetCourseListResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method Edit not implemented")
@@ -153,7 +137,7 @@ func _Course_List_Handler(srv interface{}, ctx context.Context, dec func(interfa
 }
 
 func _Course_Detail_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetCourseListReq)
+	in := new(GetCourseDetailReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -165,25 +149,7 @@ func _Course_Detail_Handler(srv interface{}, ctx context.Context, dec func(inter
 		FullMethod: Course_Detail_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(CourseServer).Detail(ctx, req.(*GetCourseListReq))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _Course_ChangeStatus_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetCourseListReq)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(CourseServer).ChangeStatus(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: Course_ChangeStatus_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(CourseServer).ChangeStatus(ctx, req.(*GetCourseListReq))
+		return srv.(CourseServer).Detail(ctx, req.(*GetCourseDetailReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -220,10 +186,6 @@ var Course_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Detail",
 			Handler:    _Course_Detail_Handler,
-		},
-		{
-			MethodName: "ChangeStatus",
-			Handler:    _Course_ChangeStatus_Handler,
 		},
 		{
 			MethodName: "Edit",
