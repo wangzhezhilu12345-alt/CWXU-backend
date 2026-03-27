@@ -65,6 +65,13 @@ func (c CourseDal) List(page, pageSize int) (*[]model.Course, int64, error) {
 	return &courses, tot, err
 }
 
+// QueryCourseByIds 批量获取课程信息
+func (c CourseDal) QueryCourseByIds(ids []int32) (*[]model.Course, error) {
+	var courses []model.Course
+	err := c.db.Where("id IN ?", ids).Find(&courses).Error
+	return &courses, err
+}
+
 // UpdateCourse 更新课程信息
 func (c CourseDal) UpdateCourse(courseID uint, courseName, className string) error {
 	// 检查className是否已被其他课程使用

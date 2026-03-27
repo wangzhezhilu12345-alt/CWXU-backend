@@ -54,6 +54,7 @@ func migrateModels(db *gorm.DB) {
 		&model.Student{},
 		&model.Teacher{},
 		&model.Course{},
+		&model.EvaluationTask{},
 		&model.EvaluationDetail{},
 	)
 	if err != nil {

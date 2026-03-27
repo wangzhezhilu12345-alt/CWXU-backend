@@ -4,8 +4,10 @@ import (
 	"edu-evaluation-backed/api/v1/base_info/course"
 	"edu-evaluation-backed/api/v1/base_info/student"
 	"edu-evaluation-backed/api/v1/base_info/teacher"
+	eva_task2 "edu-evaluation-backed/api/v1/eva_task"
 	"edu-evaluation-backed/internal/conf"
 	"edu-evaluation-backed/internal/service/base_info"
+	"edu-evaluation-backed/internal/service/eva_task"
 
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/go-kratos/kratos/v2/middleware/recovery"
@@ -17,6 +19,7 @@ func NewHTTPServer(c *conf.Server,
 	studentService *base_info.StudentService,
 	teacherService *base_info.TeacherService,
 	courseService *base_info.CourseService,
+	evaService *eva_task.EvaTaskService,
 	logger log.Logger,
 ) *http.Server {
 	var opts = []http.ServerOption{
@@ -42,5 +45,7 @@ func NewHTTPServer(c *conf.Server,
 	student_i.RegisterStudentHTTPServer(srv, studentService)
 	teacher_i.RegisterTeacherHTTPServer(srv, teacherService)
 	course.RegisterCourseHTTPServer(srv, courseService)
+	eva_task2.RegisterTaskHTTPServer(srv, evaService)
+
 	return srv
 }

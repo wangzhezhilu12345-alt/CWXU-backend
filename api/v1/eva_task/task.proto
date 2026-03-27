@@ -1,0 +1,64 @@
+syntax = "proto3";
+
+package api.v1.eva_task;
+import "google/api/annotations.proto";
+option go_package = "edu-evaluation-backed/api/v1/eva_task;eva_task";
+option java_multiple_files = true;
+option java_package = "api.v1.eva_task";
+
+service Task {
+  rpc CreateTask(CreateTaskReq) returns (CreateTaskResp) {
+    option (google.api.http) = {
+      post: "/api/v1/task/create"
+      body: "*"
+    };
+  }
+  rpc List(GetTaskReq) returns (GetTaskListResp) {
+    option (google.api.http) = {
+      get: "/api/v1/task/list"
+    };
+  }
+  rpc Detail(GetTaskReq) returns (TaskInfo) {
+    option (google.api.http) = {
+      get: "/api/v1/task/detail"
+    };
+  }
+
+}
+
+message TaskInfo {
+  string id = 1;
+  string name = 2;
+  message CourseInfo {
+    string id = 1;
+    string name = 2;
+    int32 evaluationScore = 3;
+    int32 evaluationNum = 4;
+    int32 totalNum = 5;
+  }
+  repeated CourseInfo course = 3;
+}
+
+message CreateTaskReq {
+  string name = 1;
+  repeated int32 courseIds = 2;
+}
+
+message CreateTaskResp {
+  string message = 1;
+  string id = 2;
+}
+
+message GetTaskReq {
+  string id = 1;
+}
+
+message GetTaskListReq {
+  int32 status = 1;
+  int32 page = 2;
+  int32 pageSize = 3;
+}
+
+message GetTaskListResp {
+  repeated TaskInfo tasks = 1;
+}

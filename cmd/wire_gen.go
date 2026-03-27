@@ -8,11 +8,13 @@ package main
 
 import (
 	"edu-evaluation-backed/internal/biz/base_info"
+	"edu-evaluation-backed/internal/biz/eva_task"
 	"edu-evaluation-backed/internal/conf"
 	"edu-evaluation-backed/internal/data"
 	"edu-evaluation-backed/internal/data/dal"
 	"edu-evaluation-backed/internal/server"
 	base_info2 "edu-evaluation-backed/internal/service/base_info"
+	eva_task2 "edu-evaluation-backed/internal/service/eva_task"
 	"github.com/go-kratos/kratos/v2"
 	"github.com/go-kratos/kratos/v2/log"
 )
@@ -37,7 +39,10 @@ func wireApp(confServer *conf.Server, confData *conf.Data, logger log.Logger) (*
 	courseDal := dal.NewCourseDal(dataData)
 	courseUseCase := base_info.NewCourseUseCase(courseDal)
 	courseService := base_info2.NewCourseService(courseDal, courseUseCase)
-	httpServer := server.NewHTTPServer(confServer, studentService, teacherService, courseService, logger)
+	taskDal := dal.NewTaskDal(dataData)
+	evaTaskUseCase := eva_task.NewEvaTaskUseCase(baseInfoDal, taskDal, courseDal)
+	evaTaskService := eva_task2.NewEvaTaskService(taskDal, evaTaskUseCase)
+	httpServer := server.NewHTTPServer(confServer, studentService, teacherService, courseService, evaTaskService, logger)
 	app := newApp(logger, httpServer)
 	return app, func() {
 		cleanup()
