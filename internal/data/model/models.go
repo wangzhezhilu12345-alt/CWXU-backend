@@ -27,7 +27,7 @@ type EvaluationTask struct {
 	Status  int                `json:"status" gorm:"comment:评教状态 0-未开始 1-进行中 2-已结束"`
 	Title   string             `json:"title" gorm:"size:128;comment:评教标题"`
 	Courses []Course           `json:"courses" gorm:"many2many:evaluation_courses;comment:参与评教的课程"`
-	Details []EvaluationDetail `json:"details" gorm:"foreignKey:id;comment:评教详情"`
+	Details []EvaluationDetail `json:"details" gorm:"foreignKey:TaskId;comment:评教详情"`
 }
 
 // Student 学生表
