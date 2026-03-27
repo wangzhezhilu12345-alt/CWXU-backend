@@ -1,0 +1,69 @@
+syntax = "proto3";
+
+package api.v1.auth;
+import "google/api/annotations.proto";
+option go_package = "edu-evaluation-backed/api/v1/auth;auth";
+option java_multiple_files = true;
+option java_package = "api.v1.auth";
+
+service Auth {
+  rpc AdminLogin (AdminLoginReq) returns (AdminLoginResp) {
+    option (google.api.http) = {
+      post: "/api/v1/auth/admin/login"
+      body: "*"
+    };
+  }
+  rpc StudentLogin (StudentLoginReq) returns (StudentLoginResp) {
+    option (google.api.http) = {
+      post: "/api/v1/auth/student/login"
+      body: "*"
+    };
+  }
+  rpc StudentInfo (StudentInfoReq) returns (StudentInfoResp) {
+    option (google.api.http) = {
+      get: "/api/v1/auth/student/info"
+    };
+  }
+}
+
+message AdminLoginReq {
+  string username = 1;
+  string password = 2;
+}
+
+message AdminLoginResp {
+  string message = 1;
+}
+
+message StudentLoginReq {
+  string stuNo = 1;
+  string cardNo = 2;
+  uint32 taskId = 3;
+}
+
+message StudentLoginResp {
+  string message = 1;
+  StudentData data = 2;
+}
+
+message StudentData {
+  string studentNo = 1;
+  string name = 2;
+}
+
+message StudentInfoReq {
+  string stuNo = 1;
+}
+
+message StudentInfoResp {
+  string message = 1;
+  StudentDetailInfo data = 2;
+}
+
+message StudentDetailInfo {
+  uint32 id = 1;
+  string name = 2;
+  string sex = 3;
+  string studentNo = 4;
+  string idCardNo = 5;
+}
