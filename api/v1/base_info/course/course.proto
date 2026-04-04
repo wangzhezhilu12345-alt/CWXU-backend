@@ -31,6 +31,12 @@ service Course {
       body: "*",
     };
   }
+  rpc Reset (ResetReq) returns (ResetResp) {
+    option (google.api.http) = {
+      post: "/api/v1/base-info/reset",
+      body: "*",
+    };
+  }
 }
 
 message CourseList {
@@ -79,5 +85,12 @@ message DeleteCourseReq {
 }
 
 message DeleteCourseResp {
+  string message = 1;
+}
+
+message ResetReq {
+}
+
+message ResetResp {
   string message = 1;
 }

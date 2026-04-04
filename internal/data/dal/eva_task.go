@@ -72,6 +72,17 @@ func (d *TaskDal) ChangeTaskStatus(taskID uint, status int) error {
 	return err
 }
 
+// DeleteTaskDetails 删除任务的评教详情（硬删除）
+// taskID: 评教任务ID
+// courseIDs: 课程ID列表，只有与这些课程ID都匹配的评教详情才会被删除
+// 返回值: 删除成功返回nil，错误信息
+func (d *TaskDal) DeleteTaskDetails(taskID uint, courseIDs []uint) error {
+	if len(courseIDs) == 0 {
+		return nil
+	}
+	return d.db.Unscoped().Where("task_id = ? AND course_id IN ?", taskID, courseIDs).Delete(&model.EvaluationDetail{}).Error
+}
+
 func (d *TaskDal) StudentTaskDetail(studentNo string, taskID uint) ([]model.Course, error) {
 	var courses []model.Course
 
@@ -157,15 +168,15 @@ type TeacherEvaluationResult struct {
 
 // TeacherEvaluationDetail 教师评教详情（用于生成PDF）
 type TeacherEvaluationDetail struct {
-	TeacherName    string   // 教师姓名
-	WorkNo        string   // 教师工号
-	CourseName     string   // 课程名称
-	ClassName     string   // 班级名称
-	AvgScore      float64  // 平均分
-	Rank          int      // 排名
-	TotalTeachers int      // 总教师数
-	Comments      []string // 学生评价列表
-	Summary       string   // 学生总结
+	TeacherName  string   // 教师姓名
+	WorkNo       string   // 教师工号
+	CourseName   string   // 课程名称
+	ClassName    string   // 班级名称
+	AvgScore     float64  // 平均分
+	Rank         int      // 排名
+	TotalTeachers int     // 总教师数
+	Comments     []string // 学生评价列表
+	Summaries    []string // 学生总结列表
 }
 
 // GetTaskEvaluationResults 获取任务下所有教师的评教结果
@@ -297,15 +308,14 @@ func (d *TaskDal) GetTeacherEvaluationDetailsForPDF(taskID uint) ([]TeacherEvalu
 
 	// 按教师+班级分组收集数据
 	type teacherCourseData struct {
-		TeacherName  string
-		WorkNo      string
-		CourseName  string
-		ClassName   string
-		TotalScore  float64
-		AvgScore    float64
-		Count       int
-		Comments    []string
-		Summary     string
+		TeacherName string
+		WorkNo     string
+		CourseName string
+		ClassName  string
+		TotalScore float64
+		Count      int
+		Comments   []string
+		Summaries  []string
 	}
 
 	dataMap := make(map[string]*teacherCourseData)
@@ -326,6 +336,7 @@ func (d *TaskDal) GetTeacherEvaluationDetailsForPDF(taskID uint) ([]TeacherEvalu
 				CourseName: courseName,
 				ClassName:  className,
 				Comments:   make([]string, 0),
+				Summaries:  make([]string, 0),
 			}
 		}
 
@@ -335,7 +346,7 @@ func (d *TaskDal) GetTeacherEvaluationDetailsForPDF(taskID uint) ([]TeacherEvalu
 			dataMap[key].Comments = append(dataMap[key].Comments, detail)
 		}
 		if summary != "" {
-			dataMap[key].Summary = summary
+			dataMap[key].Summaries = append(dataMap[key].Summaries, summary)
 		}
 	}
 
@@ -350,8 +361,7 @@ func (d *TaskDal) GetTeacherEvaluationDetailsForPDF(taskID uint) ([]TeacherEvalu
 	}
 	var scores []teacherScore
 	for key, td := range dataMap {
-		td.AvgScore = td.TotalScore / float64(td.Count)
-		scores = append(scores, teacherScore{key: key, avgScore: td.AvgScore})
+		scores = append(scores, teacherScore{key: key, avgScore: td.TotalScore / float64(td.Count)})
 	}
 
 	// 按平均分降序排序
@@ -368,15 +378,15 @@ func (d *TaskDal) GetTeacherEvaluationDetailsForPDF(taskID uint) ([]TeacherEvalu
 	for rank, s := range scores {
 		td := dataMap[s.key]
 		detail := TeacherEvaluationDetail{
-			TeacherName:    td.TeacherName,
+			TeacherName:   td.TeacherName,
 			WorkNo:        td.WorkNo,
 			CourseName:    td.CourseName,
 			ClassName:     td.ClassName,
-			AvgScore:      td.AvgScore,
+			AvgScore:      td.TotalScore / float64(td.Count),
 			Rank:          rank + 1,
 			TotalTeachers: len(scores),
 			Comments:      td.Comments,
-			Summary:       td.Summary,
+			Summaries:     td.Summaries,
 		}
 		details = append(details, detail)
 	}

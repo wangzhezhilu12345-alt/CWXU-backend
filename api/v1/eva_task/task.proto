@@ -138,5 +138,5 @@ message ExportTaskResultsReq {
 
 message ExportTaskResultsResp {
   string message = 1;
-  string filePath = 2;
+  string zipPath = 4;
 }

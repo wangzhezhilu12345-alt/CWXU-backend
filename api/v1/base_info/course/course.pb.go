@@ -524,6 +524,86 @@ func (x *DeleteCourseResp) GetMessage() string {
 	return ""
 }
 
+type ResetReq struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ResetReq) Reset() {
+	*x = ResetReq{}
+	mi := &file_api_v1_base_info_course_course_proto_msgTypes[9]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ResetReq) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ResetReq) ProtoMessage() {}
+
+func (x *ResetReq) ProtoReflect() protoreflect.Message {
+	mi := &file_api_v1_base_info_course_course_proto_msgTypes[9]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ResetReq.ProtoReflect.Descriptor instead.
+func (*ResetReq) Descriptor() ([]byte, []int) {
+	return file_api_v1_base_info_course_course_proto_rawDescGZIP(), []int{9}
+}
+
+type ResetResp struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Message       string                 `protobuf:"bytes,1,opt,name=message,proto3" json:"message,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ResetResp) Reset() {
+	*x = ResetResp{}
+	mi := &file_api_v1_base_info_course_course_proto_msgTypes[10]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ResetResp) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ResetResp) ProtoMessage() {}
+
+func (x *ResetResp) ProtoReflect() protoreflect.Message {
+	mi := &file_api_v1_base_info_course_course_proto_msgTypes[10]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ResetResp.ProtoReflect.Descriptor instead.
+func (*ResetResp) Descriptor() ([]byte, []int) {
+	return file_api_v1_base_info_course_course_proto_rawDescGZIP(), []int{10}
+}
+
+func (x *ResetResp) GetMessage() string {
+	if x != nil {
+		return x.Message
+	}
+	return ""
+}
+
 var File_api_v1_base_info_course_course_proto protoreflect.FileDescriptor
 
 const file_api_v1_base_info_course_course_proto_rawDesc = "" +
@@ -566,12 +646,17 @@ const file_api_v1_base_info_course_course_proto_rawDesc = "" +
 	"\x0fDeleteCourseReq\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\rR\x02id\",\n" +
 	"\x10DeleteCourseResp\x12\x18\n" +
-	"\amessage\x18\x01 \x01(\tR\amessage2\xae\x04\n" +
+	"\amessage\x18\x01 \x01(\tR\amessage\"\n" +
+	"\n" +
+	"\bResetReq\"%\n" +
+	"\tResetResp\x12\x18\n" +
+	"\amessage\x18\x01 \x01(\tR\amessage2\xa2\x05\n" +
 	"\x06Course\x12\x84\x01\n" +
 	"\x04List\x12).api.v1.base_info.course.GetCourseListReq\x1a*.api.v1.base_info.course.GetCourseListResp\"%\x82\xd3\xe4\x93\x02\x1f\x12\x1d/api/v1/base-info/course/list\x12\x8c\x01\n" +
 	"\x06Detail\x12+.api.v1.base_info.course.GetCourseDetailReq\x1a,.api.v1.base_info.course.GetCourseDetailResp\"'\x82\xd3\xe4\x93\x02!\x12\x1f/api/v1/base-info/course/detail\x12\x81\x01\n" +
 	"\x04Edit\x12&.api.v1.base_info.course.EditCourseReq\x1a'.api.v1.base_info.course.EditCourseResp\"(\x82\xd3\xe4\x93\x02\":\x01*\"\x1d/api/v1/base-info/course/edit\x12\x89\x01\n" +
-	"\x06Delete\x12(.api.v1.base_info.course.DeleteCourseReq\x1a).api.v1.base_info.course.DeleteCourseResp\"*\x82\xd3\xe4\x93\x02$:\x01*\"\x1f/api/v1/base-info/course/deleteBQ\n" +
+	"\x06Delete\x12(.api.v1.base_info.course.DeleteCourseReq\x1a).api.v1.base_info.course.DeleteCourseResp\"*\x82\xd3\xe4\x93\x02$:\x01*\"\x1f/api/v1/base-info/course/delete\x12r\n" +
+	"\x05Reset\x12!.api.v1.base_info.course.ResetReq\x1a\".api.v1.base_info.course.ResetResp\"\"\x82\xd3\xe4\x93\x02\x1c:\x01*\"\x17/api/v1/base-info/resetBQ\n" +
 	"\x17api.v1.base_info.courseP\x01Z4edu-evaluation-backed/api/v1/base_info/course;courseb\x06proto3"
 
 var (
@@ -586,7 +671,7 @@ func file_api_v1_base_info_course_course_proto_rawDescGZIP() []byte {
 	return file_api_v1_base_info_course_course_proto_rawDescData
 }
 
-var file_api_v1_base_info_course_course_proto_msgTypes = make([]protoimpl.MessageInfo, 9)
+var file_api_v1_base_info_course_course_proto_msgTypes = make([]protoimpl.MessageInfo, 11)
 var file_api_v1_base_info_course_course_proto_goTypes = []any{
 	(*CourseList)(nil),          // 0: api.v1.base_info.course.CourseList
 	(*GetCourseListReq)(nil),    // 1: api.v1.base_info.course.GetCourseListReq
@@ -597,12 +682,14 @@ var file_api_v1_base_info_course_course_proto_goTypes = []any{
 	(*EditCourseResp)(nil),      // 6: api.v1.base_info.course.EditCourseResp
 	(*DeleteCourseReq)(nil),     // 7: api.v1.base_info.course.DeleteCourseReq
 	(*DeleteCourseResp)(nil),    // 8: api.v1.base_info.course.DeleteCourseResp
-	(*teacher.TeacherInfo)(nil), // 9: api.v1.base_info.teacher_i.TeacherInfo
-	(*student.StudentInfo)(nil), // 10: api.v1.base_info.student_i.StudentInfo
+	(*ResetReq)(nil),            // 9: api.v1.base_info.course.ResetReq
+	(*ResetResp)(nil),           // 10: api.v1.base_info.course.ResetResp
+	(*teacher.TeacherInfo)(nil), // 11: api.v1.base_info.teacher_i.TeacherInfo
+	(*student.StudentInfo)(nil), // 12: api.v1.base_info.student_i.StudentInfo
 }
 var file_api_v1_base_info_course_course_proto_depIdxs = []int32{
-	9,  // 0: api.v1.base_info.course.CourseList.teacherList:type_name -> api.v1.base_info.teacher_i.TeacherInfo
-	10, // 1: api.v1.base_info.course.CourseList.studentList:type_name -> api.v1.base_info.student_i.StudentInfo
+	11, // 0: api.v1.base_info.course.CourseList.teacherList:type_name -> api.v1.base_info.teacher_i.TeacherInfo
+	12, // 1: api.v1.base_info.course.CourseList.studentList:type_name -> api.v1.base_info.student_i.StudentInfo
 	0,  // 2: api.v1.base_info.course.GetCourseListResp.data:type_name -> api.v1.base_info.course.CourseList
 	0,  // 3: api.v1.base_info.course.GetCourseDetailResp.data:type_name -> api.v1.base_info.course.CourseList
 	0,  // 4: api.v1.base_info.course.EditCourseResp.data:type_name -> api.v1.base_info.course.CourseList
@@ -610,12 +697,14 @@ var file_api_v1_base_info_course_course_proto_depIdxs = []int32{
 	3,  // 6: api.v1.base_info.course.Course.Detail:input_type -> api.v1.base_info.course.GetCourseDetailReq
 	5,  // 7: api.v1.base_info.course.Course.Edit:input_type -> api.v1.base_info.course.EditCourseReq
 	7,  // 8: api.v1.base_info.course.Course.Delete:input_type -> api.v1.base_info.course.DeleteCourseReq
-	2,  // 9: api.v1.base_info.course.Course.List:output_type -> api.v1.base_info.course.GetCourseListResp
-	4,  // 10: api.v1.base_info.course.Course.Detail:output_type -> api.v1.base_info.course.GetCourseDetailResp
-	6,  // 11: api.v1.base_info.course.Course.Edit:output_type -> api.v1.base_info.course.EditCourseResp
-	8,  // 12: api.v1.base_info.course.Course.Delete:output_type -> api.v1.base_info.course.DeleteCourseResp
-	9,  // [9:13] is the sub-list for method output_type
-	5,  // [5:9] is the sub-list for method input_type
+	9,  // 9: api.v1.base_info.course.Course.Reset:input_type -> api.v1.base_info.course.ResetReq
+	2,  // 10: api.v1.base_info.course.Course.List:output_type -> api.v1.base_info.course.GetCourseListResp
+	4,  // 11: api.v1.base_info.course.Course.Detail:output_type -> api.v1.base_info.course.GetCourseDetailResp
+	6,  // 12: api.v1.base_info.course.Course.Edit:output_type -> api.v1.base_info.course.EditCourseResp
+	8,  // 13: api.v1.base_info.course.Course.Delete:output_type -> api.v1.base_info.course.DeleteCourseResp
+	10, // 14: api.v1.base_info.course.Course.Reset:output_type -> api.v1.base_info.course.ResetResp
+	10, // [10:15] is the sub-list for method output_type
+	5,  // [5:10] is the sub-list for method input_type
 	5,  // [5:5] is the sub-list for extension type_name
 	5,  // [5:5] is the sub-list for extension extendee
 	0,  // [0:5] is the sub-list for field type_name
@@ -632,7 +721,7 @@ func file_api_v1_base_info_course_course_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_api_v1_base_info_course_course_proto_rawDesc), len(file_api_v1_base_info_course_course_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   9,
+			NumMessages:   11,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

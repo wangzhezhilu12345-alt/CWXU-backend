@@ -34,6 +34,7 @@ func wireApp(confServer *conf.Server, confData *conf.Data, logger log.Logger) (*
 		return nil, nil, err
 	}
 	baseInfoDal := dal.NewBaseInfoDal(dataData)
+	baseDal := dal.NewBaseDal(dataData)
 	authUseCase := auth.NewAuthUseCase(baseInfoDal)
 	authService := auth2.NewAuthService(authUseCase)
 	studentUseCase := base_info.NewStudentUseCase(baseInfoDal)
@@ -42,7 +43,7 @@ func wireApp(confServer *conf.Server, confData *conf.Data, logger log.Logger) (*
 	teacherService := base_info2.NewTeacherService(teacherUseCase, baseInfoDal)
 	courseDal := dal.NewCourseDal(dataData)
 	courseUseCase := base_info.NewCourseUseCase(courseDal)
-	courseService := base_info2.NewCourseService(courseDal, courseUseCase)
+	courseService := base_info2.NewCourseService(baseDal, courseDal, courseUseCase)
 	taskDal := dal.NewTaskDal(dataData)
 	evaTaskUseCase := eva_task.NewEvaTaskUseCase(baseInfoDal, taskDal, courseDal)
 	evaTaskService := eva_task2.NewEvaTaskService(taskDal, evaTaskUseCase)

@@ -2,7 +2,7 @@
 // versions:
 // - protoc-gen-go-grpc v1.6.1
 // - protoc             v6.33.1
-// source: v1/eva_task/task.proto
+// source: api/v1/eva_task/task.proto
 
 package eva_task
 
@@ -345,5 +345,5 @@ var Task_ServiceDesc = grpc.ServiceDesc{
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "v1/eva_task/task.proto",
+	Metadata: "api/v1/eva_task/task.proto",
 }

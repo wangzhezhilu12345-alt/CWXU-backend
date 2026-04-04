@@ -164,11 +164,24 @@ func (c CourseDal) DeleteCourse(id uint) error {
 	}
 
 	// 删除课程本身
-	if err := c.db.Delete(&course).Error; err != nil {
-		return err
-	}
+	return c.db.Delete(&course).Error
+}
 
-	return nil
+// UpdateCourseStatus 更新课程状态
+// courseID: 课程ID
+// status: 新状态（1: 进行中, 2: 已结课）
+func (c CourseDal) UpdateCourseStatus(courseID uint, status int) error {
+	return c.db.Model(&model.Course{}).Where("id = ?", courseID).Update("status", status).Error
+}
+
+// ResetEvaluationStats 重置课程评教统计
+// courseID: 课程ID
+// 将评教总分和评教人数重置为0
+func (c CourseDal) ResetEvaluationStats(courseID uint) error {
+	return c.db.Model(&model.Course{}).Where("id = ?", courseID).Updates(map[string]interface{}{
+		"evaluation_score": 0,
+		"evaluation_num":    0,
+	}).Error
 }
 
 // NewCourseDal 创建课程数据访问层实例

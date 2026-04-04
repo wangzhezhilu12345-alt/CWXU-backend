@@ -3,7 +3,10 @@ package eva_task
 import (
 	"fmt"
 	"os"
+	"path/filepath"
 	"strconv"
+	"strings"
+	"time"
 
 	"edu-evaluation-backed/internal/data/dal"
 	"edu-evaluation-backed/internal/data/model"
@@ -54,10 +57,59 @@ func (e EvaTaskUseCase) GetTaskDetail(taskID uint) (*model.EvaluationTask, error
 
 // ChangeTaskStatus 修改评教任务状态
 // taskID: 评教任务ID
-// status: 新状态值（1: 进行中, 2: 已结束）
+// status: 新状态值（0: 未开始, 1: 进行中, 2: 已结束）
+// 当状态设置为2时，自动将关联的课程状态也设置为2（已结课）
+// 当状态从2变为0时，恢复课程状态为1，删除评教详情，重置课程分数
 // 返回值: 修改成功返回nil，错误信息
 func (e EvaTaskUseCase) ChangeTaskStatus(taskID uint, status int) error {
-	return e.taskDal.ChangeTaskStatus(taskID, status)
+	// 获取当前任务状态
+	task, err := e.taskDal.GetTaskDetail(taskID)
+	if err != nil {
+		return err
+	}
+	oldStatus := task.Status
+
+	// 修改任务状态
+	if err := e.taskDal.ChangeTaskStatus(taskID, status); err != nil {
+		return err
+	}
+
+	// 当任务状态变为已结束时（2），同步更新关联课程的状态
+	if status == 2 {
+		for _, course := range task.Courses {
+			if err := e.courseDal.UpdateCourseStatus(course.ID, 2); err != nil {
+				return err
+			}
+		}
+	}
+
+	// 当任务状态从已结束(2)变回未开始(0)时，重置所有数据
+	if oldStatus == 2 && status == 0 {
+		// 提取关联课程的ID列表
+		courseIDs := make([]uint, 0, len(task.Courses))
+		for _, course := range task.Courses {
+			courseIDs = append(courseIDs, course.ID)
+		}
+
+		// 删除该任务下所有关联课程的评教详情
+		if err := e.taskDal.DeleteTaskDetails(taskID, courseIDs); err != nil {
+			return err
+		}
+
+		// 重置所有关联课程的评教状态和统计
+		for _, course := range task.Courses {
+			// 恢复课程状态为进行中
+			if err := e.courseDal.UpdateCourseStatus(course.ID, 1); err != nil {
+				return err
+			}
+			// 重置评教分数和人数为0
+			if err := e.courseDal.ResetEvaluationStats(course.ID); err != nil {
+				return err
+			}
+		}
+	}
+
+	return nil
 }
 
 // NewEvaTaskUseCase 创建评教任务业务用例实例
@@ -74,21 +126,78 @@ func NewEvaTaskUseCase(baseDal *dal.BaseInfoDal, evaTaskDal *dal.TaskDal, course
 }
 
 // GetTaskEvaluationResults 获取任务评教结果（用于导出）
-func (e *EvaTaskUseCase) GetTaskEvaluationResults(taskID uint) ([]dal.TeacherEvaluationResult, error) {
+func (e EvaTaskUseCase) GetTaskEvaluationResults(taskID uint) ([]dal.TeacherEvaluationResult, error) {
 	return e.taskDal.GetTaskEvaluationResults(taskID)
 }
 
-// ExportTaskResults 导出任务评教结果为 xlsx
+// ExportTaskResults 导出任务评教结果
 // taskID: 评教任务ID
-// 返回值: xlsx文件路径，错误信息
-func (e *EvaTaskUseCase) ExportTaskResults(taskID uint) (string, error) {
-	// 获取评教结果数据
-	results, _ := e.GetTaskEvaluationResults(taskID)
+// 返回值: 导出结果（zip路径），错误信息
+func (e EvaTaskUseCase) ExportTaskResults(taskID uint) (*ExportResult, error) {
+	// 获取可执行文件所在目录
+	exePath, _ := os.Executable()
+	baseDir := filepath.Dir(exePath)
+	tmpDir := filepath.Join(baseDir, "tmp")
+	resDir := filepath.Join(baseDir, "res")
 
-	// 确保tmp目录存在
-	os.MkdirAll("./tmp", 0755)
+	// 确保目录存在
+	os.MkdirAll(tmpDir, 0755)
+	os.MkdirAll(resDir, 0755)
+
+	// 获取评教结果数据
+	results, err := e.GetTaskEvaluationResults(taskID)
+	if err != nil {
+		return nil, err
+	}
 
 	// ========== 生成 xlsx ==========
+	xlsxPath := filepath.Join(tmpDir, "评教结果.xlsx")
+	if err := generateXlsx(results, xlsxPath); err != nil {
+		return nil, err
+	}
+
+	// ========== 生成 PDF ==========
+	// 获取教师评教详情用于生成 PDF
+	details, err := e.taskDal.GetTeacherEvaluationDetailsForPDF(taskID)
+	if err != nil {
+		return nil, err
+	}
+
+	pdfPaths := generateAllPDFs(details, tmpDir)
+
+	// ========== 打包 zip ==========
+	// 生成随机文件名在res目录
+	zipName := fmt.Sprintf("%d_%s.zip", time.Now().UnixNano(), randomString(8))
+	zipPath := filepath.Join(resDir, zipName)
+	allFiles := []string{"评教结果.xlsx"}
+	for _, p := range pdfPaths {
+		// 提取文件名
+		parts := strings.Split(p, string(filepath.Separator))
+		allFiles = append(allFiles, parts[len(parts)-1])
+	}
+	if err := zipFiles(tmpDir, zipPath, allFiles...); err != nil {
+		return nil, err
+	}
+
+	return &ExportResult{
+		XlsxPath: xlsxPath,
+		PdfPaths: pdfPaths,
+		ZipPath:  fmt.Sprintf("res/%s", zipName),
+	}, nil
+}
+
+// randomString 生成随机字符串
+func randomString(length int) string {
+	const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+	b := make([]byte, length)
+	for i := range b {
+		b[i] = charset[time.Now().UnixNano()%int64(len(charset))]
+	}
+	return string(b)
+}
+
+// generateXlsx 生成 xlsx 文件
+func generateXlsx(results []dal.TeacherEvaluationResult, xlsxPath string) error {
 	f := excelize.NewFile()
 	defer f.Close()
 
@@ -97,11 +206,11 @@ func (e *EvaTaskUseCase) ExportTaskResults(taskID uint) (string, error) {
 	f.SetActiveSheet(index)
 
 	// 设置列宽
-	f.SetColWidth(sheetName, "A", "A", 8)   // 序号
-	f.SetColWidth(sheetName, "B", "B", 15)  // 工号
-	f.SetColWidth(sheetName, "C", "C", 25)  // 教师姓名
-	f.SetColWidth(sheetName, "D", "D", 20)  // 课程
-	f.SetColWidth(sheetName, "E", "E", 15)  // 班级名
+	f.SetColWidth(sheetName, "A", "A", 8)
+	f.SetColWidth(sheetName, "B", "B", 15)
+	f.SetColWidth(sheetName, "C", "C", 25)
+	f.SetColWidth(sheetName, "D", "D", 20)
+	f.SetColWidth(sheetName, "E", "E", 15)
 
 	// 计算最大题目数
 	maxQuestions := 0
@@ -116,11 +225,11 @@ func (e *EvaTaskUseCase) ExportTaskResults(taskID uint) (string, error) {
 	// 设置样式
 	headerStyle, _ := f.NewStyle(&excelize.Style{
 		Alignment: &excelize.Alignment{Horizontal: "center"},
-		Border:   []excelize.Border{{Type: "left", Style: 1}, {Type: "right", Style: 1}, {Type: "top", Style: 1}, {Type: "bottom", Style: 1}},
+		Border:    []excelize.Border{{Type: "left", Style: 1}, {Type: "right", Style: 1}, {Type: "top", Style: 1}, {Type: "bottom", Style: 1}},
 	})
 	dataStyle, _ := f.NewStyle(&excelize.Style{
 		Alignment: &excelize.Alignment{Horizontal: "center"},
-		Border:   []excelize.Border{{Type: "left", Style: 1}, {Type: "right", Style: 1}, {Type: "top", Style: 1}, {Type: "bottom", Style: 1}},
+		Border:    []excelize.Border{{Type: "left", Style: 1}, {Type: "right", Style: 1}, {Type: "top", Style: 1}, {Type: "bottom", Style: 1}},
 	})
 
 	// 写入表头
@@ -184,10 +293,5 @@ func (e *EvaTaskUseCase) ExportTaskResults(taskID uint) (string, error) {
 		rowNum++
 	}
 
-	xlsxPath := "./tmp/评教结果.xlsx"
-	if err := f.SaveAs(xlsxPath); err != nil {
-		return "", err
-	}
-
-	return xlsxPath, nil
+	return f.SaveAs(xlsxPath)
 }

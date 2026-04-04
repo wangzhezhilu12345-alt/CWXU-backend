@@ -168,17 +168,17 @@ func NewEvaTaskService(taskDal *dal.TaskDal, taskUC *eva_task.EvaTaskUseCase) *E
 	}
 }
 
-// ExportTaskResults 导出任务评教结果为 xlsx
-func (e *EvaTaskService) ExportTaskResults(ctx context.Context, req *eva_task2.ExportTaskResultsReq) (*eva_task2.ExportTaskResultsResp, error) {
+// ExportTaskResults 导出任务评教结果（xlsx + PDF）
+func (e EvaTaskService) ExportTaskResults(ctx context.Context, req *eva_task2.ExportTaskResultsReq) (*eva_task2.ExportTaskResultsResp, error) {
 	taskID := uint(req.TaskId)
 
-	xlsxPath, err := e.taskUC.ExportTaskResults(taskID)
+	result, err := e.taskUC.ExportTaskResults(taskID)
 	if err != nil {
 		return nil, err
 	}
 
 	return &eva_task2.ExportTaskResultsResp{
-		Message:  "导出成功",
-		FilePath: xlsxPath,
+		Message: "导出成功",
+		ZipPath: result.ZipPath,
 	}, nil
 }

@@ -23,12 +23,14 @@ const OperationCourseDelete = "/api.v1.base_info.course.Course/Delete"
 const OperationCourseDetail = "/api.v1.base_info.course.Course/Detail"
 const OperationCourseEdit = "/api.v1.base_info.course.Course/Edit"
 const OperationCourseList = "/api.v1.base_info.course.Course/List"
+const OperationCourseReset = "/api.v1.base_info.course.Course/Reset"
 
 type CourseHTTPServer interface {
 	Delete(context.Context, *DeleteCourseReq) (*DeleteCourseResp, error)
 	Detail(context.Context, *GetCourseDetailReq) (*GetCourseDetailResp, error)
 	Edit(context.Context, *EditCourseReq) (*EditCourseResp, error)
 	List(context.Context, *GetCourseListReq) (*GetCourseListResp, error)
+	Reset(context.Context, *ResetReq) (*ResetResp, error)
 }
 
 func RegisterCourseHTTPServer(s *http.Server, srv CourseHTTPServer) {
@@ -37,6 +39,7 @@ func RegisterCourseHTTPServer(s *http.Server, srv CourseHTTPServer) {
 	r.GET("/api/v1/base-info/course/detail", _Course_Detail0_HTTP_Handler(srv))
 	r.POST("/api/v1/base-info/course/edit", _Course_Edit0_HTTP_Handler(srv))
 	r.POST("/api/v1/base-info/course/delete", _Course_Delete0_HTTP_Handler(srv))
+	r.POST("/api/v1/base-info/reset", _Course_Reset0_HTTP_Handler(srv))
 }
 
 func _Course_List0_HTTP_Handler(srv CourseHTTPServer) func(ctx http.Context) error {
@@ -121,11 +124,34 @@ func _Course_Delete0_HTTP_Handler(srv CourseHTTPServer) func(ctx http.Context) e
 	}
 }
 
+func _Course_Reset0_HTTP_Handler(srv CourseHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in ResetReq
+		if err := ctx.Bind(&in); err != nil {
+			return err
+		}
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationCourseReset)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.Reset(ctx, req.(*ResetReq))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*ResetResp)
+		return ctx.Result(200, reply)
+	}
+}
+
 type CourseHTTPClient interface {
 	Delete(ctx context.Context, req *DeleteCourseReq, opts ...http.CallOption) (rsp *DeleteCourseResp, err error)
 	Detail(ctx context.Context, req *GetCourseDetailReq, opts ...http.CallOption) (rsp *GetCourseDetailResp, err error)
 	Edit(ctx context.Context, req *EditCourseReq, opts ...http.CallOption) (rsp *EditCourseResp, err error)
 	List(ctx context.Context, req *GetCourseListReq, opts ...http.CallOption) (rsp *GetCourseListResp, err error)
+	Reset(ctx context.Context, req *ResetReq, opts ...http.CallOption) (rsp *ResetResp, err error)
 }
 
 type CourseHTTPClientImpl struct {
@@ -182,6 +208,19 @@ func (c *CourseHTTPClientImpl) List(ctx context.Context, in *GetCourseListReq, o
 	opts = append(opts, http.Operation(OperationCourseList))
 	opts = append(opts, http.PathTemplate(pattern))
 	err := c.cc.Invoke(ctx, "GET", path, nil, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+func (c *CourseHTTPClientImpl) Reset(ctx context.Context, in *ResetReq, opts ...http.CallOption) (*ResetResp, error) {
+	var out ResetResp
+	pattern := "/api/v1/base-info/reset"
+	path := binding.EncodeURL(pattern, in, false)
+	opts = append(opts, http.Operation(OperationCourseReset))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "POST", path, in, &out, opts...)
 	if err != nil {
 		return nil, err
 	}
