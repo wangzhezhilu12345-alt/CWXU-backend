@@ -5,6 +5,7 @@ import (
 	"edu-evaluation-backed/internal/data"
 	"edu-evaluation-backed/internal/data/model"
 	"errors"
+	"log"
 
 	"github.com/redis/go-redis/v9"
 	"gorm.io/gorm"
@@ -51,6 +52,7 @@ func (c CourseDal) AddStudent(courseID uint, studentNos []string) error {
 	course := model.Course{}
 	course.ID = courseID
 	var students []model.Student
+	log.Println("students: ", studentNos)
 	if err := c.db.Where("student_no IN ?", studentNos).Find(&students).Error; err != nil {
 		return err
 	}
@@ -180,7 +182,7 @@ func (c CourseDal) UpdateCourseStatus(courseID uint, status int) error {
 func (c CourseDal) ResetEvaluationStats(courseID uint) error {
 	return c.db.Model(&model.Course{}).Where("id = ?", courseID).Updates(map[string]interface{}{
 		"evaluation_score": 0,
-		"evaluation_num":    0,
+		"evaluation_num":   0,
 	}).Error
 }
 

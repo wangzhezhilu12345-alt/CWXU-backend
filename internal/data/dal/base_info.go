@@ -245,3 +245,14 @@ func (d *BaseInfoDal) GetStudentByStudentNo(stuNo string) (*model.Student, error
 	}
 	return &student, nil
 }
+
+// AdminChangePassword 管理员修改密码
+// 先验证用户名+旧密码，验证通过后更新密码
+func (d *BaseInfoDal) AdminChangePassword(username, oldPassword, newPassword string) error {
+	var admin model.Admin
+	err := d.db.Where("username = ? AND password = ?", username, oldPassword).First(&admin).Error
+	if err != nil {
+		return errors.New("用户名或旧密码错误")
+	}
+	return d.db.Model(&admin).Update("password", newPassword).Error
+}

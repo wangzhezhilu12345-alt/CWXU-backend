@@ -35,3 +35,8 @@ func (a *AuthUseCase) StudentLogin(stuNo, cardNo string, taskId uint) (*model.St
 func (a *AuthUseCase) GetStudentInfo(stuNo string) (*model.Student, error) {
 	return a.baseDal.GetStudentByStudentNo(stuNo)
 }
+
+// AdminChangePassword 管理员修改密码
+func (a *AuthUseCase) AdminChangePassword(username, oldPassword, newPassword string) error {
+	return a.baseDal.AdminChangePassword(username, oldPassword, newPassword)
+}
