@@ -3,19 +3,19 @@
 
 openapi: 3.0.3
 info:
-    title: Course API
+    title: Auth API
     version: 0.0.1
 paths:
-    /api/v1/base-info/course/delete:
+    /api/v1/auth/admin/change-password:
         post:
             tags:
-                - Course
-            operationId: Course_Delete
+                - Auth
+            operationId: Auth_AdminChangePassword
             requestBody:
                 content:
                     application/json:
                         schema:
-                            $ref: '#/components/schemas/DeleteCourseReq'
+                            $ref: '#/components/schemas/AdminChangePasswordReq'
                 required: true
             responses:
                 "200":
@@ -23,47 +23,70 @@ paths:
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/DeleteCourseResp'
+                                $ref: '#/components/schemas/AdminChangePasswordResp'
                 default:
                     description: Default error response
                     content:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/Status'
-    /api/v1/base-info/course/detail:
+    /api/v1/auth/admin/login:
+        post:
+            tags:
+                - Auth
+            operationId: Auth_AdminLogin
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/AdminLoginReq'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/AdminLoginResp'
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
+    /api/v1/auth/student/info:
         get:
             tags:
-                - Course
-            operationId: Course_Detail
+                - Auth
+            operationId: Auth_StudentInfo
             parameters:
-                - name: courseId
+                - name: stuNo
                   in: query
                   schema:
-                    type: integer
-                    format: int32
+                    type: string
             responses:
                 "200":
                     description: OK
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/GetCourseDetailResp'
+                                $ref: '#/components/schemas/StudentInfoResp'
                 default:
                     description: Default error response
                     content:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/Status'
-    /api/v1/base-info/course/edit:
+    /api/v1/auth/student/login:
         post:
             tags:
-                - Course
-            operationId: Course_Edit
+                - Auth
+            operationId: Auth_StudentLogin
             requestBody:
                 content:
                     application/json:
                         schema:
-                            $ref: '#/components/schemas/EditCourseReq'
+                            $ref: '#/components/schemas/StudentLoginReq'
                 required: true
             responses:
                 "200":
@@ -71,60 +94,7 @@ paths:
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/EditCourseResp'
-                default:
-                    description: Default error response
-                    content:
-                        application/json:
-                            schema:
-                                $ref: '#/components/schemas/Status'
-    /api/v1/base-info/course/list:
-        get:
-            tags:
-                - Course
-            operationId: Course_List
-            parameters:
-                - name: page
-                  in: query
-                  schema:
-                    type: integer
-                    format: int32
-                - name: pageSize
-                  in: query
-                  schema:
-                    type: integer
-                    format: int32
-            responses:
-                "200":
-                    description: OK
-                    content:
-                        application/json:
-                            schema:
-                                $ref: '#/components/schemas/GetCourseListResp'
-                default:
-                    description: Default error response
-                    content:
-                        application/json:
-                            schema:
-                                $ref: '#/components/schemas/Status'
-    /api/v1/base-info/reset:
-        post:
-            tags:
-                - Course
-            operationId: Course_Reset
-            requestBody:
-                content:
-                    application/json:
-                        schema:
-                            $ref: '#/components/schemas/ResetReq'
-                required: true
-            responses:
-                "200":
-                    description: OK
-                    content:
-                        application/json:
-                            schema:
-                                $ref: '#/components/schemas/ResetResp'
+                                $ref: '#/components/schemas/StudentLoginResp'
                 default:
                     description: Default error response
                     content:
@@ -133,77 +103,33 @@ paths:
                                 $ref: '#/components/schemas/Status'
 components:
     schemas:
-        CourseList:
+        AdminChangePasswordReq:
             type: object
             properties:
-                id:
-                    type: integer
-                    format: uint32
-                courseName:
+                username:
                     type: string
-                className:
+                oldPassword:
                     type: string
-                status:
-                    type: integer
-                    format: int32
-                teacherList:
-                    type: array
-                    items:
-                        $ref: '#/components/schemas/TeacherInfo'
-                studentList:
-                    type: array
-                    items:
-                        $ref: '#/components/schemas/StudentInfo'
-        DeleteCourseReq:
-            type: object
-            properties:
-                id:
-                    type: integer
-                    format: uint32
-        DeleteCourseResp:
+                newPassword:
+                    type: string
+        AdminChangePasswordResp:
             type: object
             properties:
                 message:
                     type: string
-        EditCourseReq:
+        AdminLoginReq:
             type: object
             properties:
-                courseId:
-                    type: integer
-                    format: int32
-                courseName:
+                username:
                     type: string
-                className:
+                password:
                     type: string
-                teacherIds:
-                    type: array
-                    items:
-                        type: integer
-                        format: int32
-        EditCourseResp:
+        AdminLoginResp:
             type: object
             properties:
                 message:
                     type: string
-                data:
-                    $ref: '#/components/schemas/CourseList'
-        GetCourseDetailResp:
-            type: object
-            properties:
-                message:
-                    type: string
-                data:
-                    $ref: '#/components/schemas/CourseList'
-        GetCourseListResp:
-            type: object
-            properties:
-                message:
-                    type: string
-                data:
-                    type: array
-                    items:
-                        $ref: '#/components/schemas/CourseList'
-                total:
+                token:
                     type: string
         GoogleProtobufAny:
             type: object
@@ -213,14 +139,6 @@ components:
                     description: The type of the serialized message.
             additionalProperties: true
             description: Contains an arbitrary serialized message along with a @type that describes the type of the serialized message.
-        ResetReq:
-            type: object
-            properties: {}
-        ResetResp:
-            type: object
-            properties:
-                message:
-                    type: string
         Status:
             type: object
             properties:
@@ -237,7 +155,16 @@ components:
                         $ref: '#/components/schemas/GoogleProtobufAny'
                     description: A list of messages that carry the error details.  There is a common set of message types for APIs to use.
             description: 'The `Status` type defines a logical error model that is suitable for different programming environments, including REST APIs and RPC APIs. It is used by [gRPC](https://github.com/grpc). Each `Status` message contains three pieces of data: error code, error message, and error details. You can find out more about this error model and how to work with it in the [API Design Guide](https://cloud.google.com/apis/design/errors).'
-        StudentInfo:
+        StudentData:
+            type: object
+            properties:
+                studentNo:
+                    type: string
+                name:
+                    type: string
+                token:
+                    type: string
+        StudentDetailInfo:
             type: object
             properties:
                 id:
@@ -251,19 +178,29 @@ components:
                     type: string
                 idCardNo:
                     type: string
-        TeacherInfo:
+        StudentInfoResp:
             type: object
             properties:
-                id:
+                message:
+                    type: string
+                data:
+                    $ref: '#/components/schemas/StudentDetailInfo'
+        StudentLoginReq:
+            type: object
+            properties:
+                stuNo:
+                    type: string
+                cardNo:
+                    type: string
+                taskId:
                     type: integer
                     format: uint32
-                name:
+        StudentLoginResp:
+            type: object
+            properties:
+                message:
                     type: string
-                sex:
-                    type: string
-                workNo:
-                    type: string
-                email:
-                    type: string
+                data:
+                    $ref: '#/components/schemas/StudentData'
 tags:
-    - name: Course
+    - name: Auth

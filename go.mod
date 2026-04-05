@@ -6,9 +6,11 @@ toolchain go1.24.6
 
 require (
 	github.com/go-kratos/kratos/v2 v2.9.2
+	github.com/golang-jwt/jwt/v5 v5.3.1
 	github.com/google/wire v0.6.0
-	github.com/jung-kurt/gofpdf v1.16.2
+	github.com/gorilla/mux v1.8.1
 	github.com/redis/go-redis/v9 v9.18.0
+	github.com/signintech/gopdf v0.36.0
 	github.com/xuri/excelize/v2 v2.10.1
 	go.uber.org/automaxprocs v1.5.1
 	google.golang.org/genproto/googleapis/api v0.0.0-20240528184218-531527333157
@@ -31,7 +33,6 @@ require (
 	github.com/go-playground/form/v4 v4.2.1 // indirect
 	github.com/go-sql-driver/mysql v1.8.1 // indirect
 	github.com/google/uuid v1.6.0 // indirect
-	github.com/gorilla/mux v1.8.1 // indirect
 	github.com/jackc/pgpassfile v1.0.0 // indirect
 	github.com/jackc/pgservicefile v0.0.0-20240606120523-5a60cdf6a761 // indirect
 	github.com/jackc/pgx/v5 v5.6.0 // indirect
@@ -43,7 +44,6 @@ require (
 	github.com/pkg/errors v0.8.1 // indirect
 	github.com/richardlehane/mscfb v1.0.6 // indirect
 	github.com/richardlehane/msoleps v1.0.6 // indirect
-	github.com/signintech/gopdf v0.36.0 // indirect
 	github.com/tiendc/go-deepcopy v1.7.2 // indirect
 	github.com/xuri/efp v0.0.1 // indirect
 	github.com/xuri/nfp v0.0.2-0.20250530014748-2ddeb826f9a9 // indirect

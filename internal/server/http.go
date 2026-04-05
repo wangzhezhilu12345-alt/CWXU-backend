@@ -1,6 +1,9 @@
 package server
 
 import (
+	"context"
+	"net/http"
+
 	"edu-evaluation-backed/api/v1/auth"
 	"edu-evaluation-backed/api/v1/base_info/course"
 	"edu-evaluation-backed/api/v1/base_info/student"
@@ -10,13 +13,30 @@ import (
 	authSvc "edu-evaluation-backed/internal/service/auth"
 	"edu-evaluation-backed/internal/service/base_info"
 	"edu-evaluation-backed/internal/service/eva_task"
-	http2 "net/http"
 
 	"github.com/go-kratos/kratos/v2/log"
+	jwtMiddleware "github.com/go-kratos/kratos/v2/middleware/auth/jwt"
 	"github.com/go-kratos/kratos/v2/middleware/recovery"
+	"github.com/go-kratos/kratos/v2/middleware/selector"
 	khttp "github.com/go-kratos/kratos/v2/transport/http"
+	"github.com/golang-jwt/jwt/v5"
 	"github.com/gorilla/mux"
 )
+
+// jwtSecretKey JWT 签名密钥，需与 auth utility 保持一致
+var jwtSecretKey = []byte("edu-evaluation-secret-key")
+
+// whitelistOperations 不需要 JWT 校验的 operation 列表
+var whitelistOperations = map[string]bool{
+	"/api.v1.auth.Auth/AdminLogin":   true,
+	"/api.v1.auth.Auth/StudentLogin": true,
+	"/api.v1.eva_task.Task/List":     true,
+}
+
+// whitelistMatcher 白名单匹配：白名单 operation 返回 false（不应用 JWT 中间件），其余返回 true
+func whitelistMatcher(ctx context.Context, operation string) bool {
+	return !whitelistOperations[operation]
+}
 
 // NewHTTPServer new an HTTP server.
 func NewHTTPServer(c *conf.Server,
@@ -30,6 +50,11 @@ func NewHTTPServer(c *conf.Server,
 	var opts = []khttp.ServerOption{
 		khttp.Middleware(
 			recovery.Recovery(),
+			selector.Server(
+				jwtMiddleware.Server(func(token *jwt.Token) (interface{}, error) {
+					return jwtSecretKey, nil
+				}),
+			).Match(whitelistMatcher).Build(),
 		),
 	}
 	if c.Http.Network != "" {
@@ -56,7 +81,7 @@ func NewHTTPServer(c *conf.Server,
 
 	// 静态文件下载 - 使用可执行文件所在目录
 	router := mux.NewRouter()
-	router.PathPrefix("/res").Handler(http2.StripPrefix("/res", http2.FileServer(http2.Dir("./res"))))
+	router.PathPrefix("/res").Handler(http.StripPrefix("/res", http.FileServer(http.Dir("./res"))))
 	srv.HandlePrefix("/", router)
 	return srv
 }

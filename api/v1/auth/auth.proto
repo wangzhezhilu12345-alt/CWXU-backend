@@ -24,6 +24,12 @@ service Auth {
       get: "/api/v1/auth/student/info"
     };
   }
+  rpc AdminChangePassword (AdminChangePasswordReq) returns (AdminChangePasswordResp) {
+    option (google.api.http) = {
+      post: "/api/v1/auth/admin/change-password"
+      body: "*"
+    };
+  }
 }
 
 message AdminLoginReq {
@@ -33,6 +39,7 @@ message AdminLoginReq {
 
 message AdminLoginResp {
   string message = 1;
+  string token = 2;
 }
 
 message StudentLoginReq {
@@ -49,6 +56,7 @@ message StudentLoginResp {
 message StudentData {
   string studentNo = 1;
   string name = 2;
+  string token = 3;
 }
 
 message StudentInfoReq {
@@ -66,4 +74,14 @@ message StudentDetailInfo {
   string sex = 3;
   string studentNo = 4;
   string idCardNo = 5;
+}
+
+message AdminChangePasswordReq {
+  string username = 1;
+  string oldPassword = 2;
+  string newPassword = 3;
+}
+
+message AdminChangePasswordResp {
+  string message = 1;
 }

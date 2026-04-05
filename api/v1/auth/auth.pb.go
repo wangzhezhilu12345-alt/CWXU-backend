@@ -2,7 +2,7 @@
 // versions:
 // 	protoc-gen-go v1.36.11
 // 	protoc        v6.33.1
-// source: v1/auth/auth.proto
+// source: api/v1/auth/auth.proto
 
 package auth
 
@@ -32,7 +32,7 @@ type AdminLoginReq struct {
 
 func (x *AdminLoginReq) Reset() {
 	*x = AdminLoginReq{}
-	mi := &file_v1_auth_auth_proto_msgTypes[0]
+	mi := &file_api_v1_auth_auth_proto_msgTypes[0]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -44,7 +44,7 @@ func (x *AdminLoginReq) String() string {
 func (*AdminLoginReq) ProtoMessage() {}
 
 func (x *AdminLoginReq) ProtoReflect() protoreflect.Message {
-	mi := &file_v1_auth_auth_proto_msgTypes[0]
+	mi := &file_api_v1_auth_auth_proto_msgTypes[0]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -57,7 +57,7 @@ func (x *AdminLoginReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AdminLoginReq.ProtoReflect.Descriptor instead.
 func (*AdminLoginReq) Descriptor() ([]byte, []int) {
-	return file_v1_auth_auth_proto_rawDescGZIP(), []int{0}
+	return file_api_v1_auth_auth_proto_rawDescGZIP(), []int{0}
 }
 
 func (x *AdminLoginReq) GetUsername() string {
@@ -77,13 +77,14 @@ func (x *AdminLoginReq) GetPassword() string {
 type AdminLoginResp struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Message       string                 `protobuf:"bytes,1,opt,name=message,proto3" json:"message,omitempty"`
+	Token         string                 `protobuf:"bytes,2,opt,name=token,proto3" json:"token,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
 func (x *AdminLoginResp) Reset() {
 	*x = AdminLoginResp{}
-	mi := &file_v1_auth_auth_proto_msgTypes[1]
+	mi := &file_api_v1_auth_auth_proto_msgTypes[1]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -95,7 +96,7 @@ func (x *AdminLoginResp) String() string {
 func (*AdminLoginResp) ProtoMessage() {}
 
 func (x *AdminLoginResp) ProtoReflect() protoreflect.Message {
-	mi := &file_v1_auth_auth_proto_msgTypes[1]
+	mi := &file_api_v1_auth_auth_proto_msgTypes[1]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -108,12 +109,19 @@ func (x *AdminLoginResp) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AdminLoginResp.ProtoReflect.Descriptor instead.
 func (*AdminLoginResp) Descriptor() ([]byte, []int) {
-	return file_v1_auth_auth_proto_rawDescGZIP(), []int{1}
+	return file_api_v1_auth_auth_proto_rawDescGZIP(), []int{1}
 }
 
 func (x *AdminLoginResp) GetMessage() string {
 	if x != nil {
 		return x.Message
+	}
+	return ""
+}
+
+func (x *AdminLoginResp) GetToken() string {
+	if x != nil {
+		return x.Token
 	}
 	return ""
 }
@@ -129,7 +137,7 @@ type StudentLoginReq struct {
 
 func (x *StudentLoginReq) Reset() {
 	*x = StudentLoginReq{}
-	mi := &file_v1_auth_auth_proto_msgTypes[2]
+	mi := &file_api_v1_auth_auth_proto_msgTypes[2]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -141,7 +149,7 @@ func (x *StudentLoginReq) String() string {
 func (*StudentLoginReq) ProtoMessage() {}
 
 func (x *StudentLoginReq) ProtoReflect() protoreflect.Message {
-	mi := &file_v1_auth_auth_proto_msgTypes[2]
+	mi := &file_api_v1_auth_auth_proto_msgTypes[2]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -154,7 +162,7 @@ func (x *StudentLoginReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use StudentLoginReq.ProtoReflect.Descriptor instead.
 func (*StudentLoginReq) Descriptor() ([]byte, []int) {
-	return file_v1_auth_auth_proto_rawDescGZIP(), []int{2}
+	return file_api_v1_auth_auth_proto_rawDescGZIP(), []int{2}
 }
 
 func (x *StudentLoginReq) GetStuNo() string {
@@ -188,7 +196,7 @@ type StudentLoginResp struct {
 
 func (x *StudentLoginResp) Reset() {
 	*x = StudentLoginResp{}
-	mi := &file_v1_auth_auth_proto_msgTypes[3]
+	mi := &file_api_v1_auth_auth_proto_msgTypes[3]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -200,7 +208,7 @@ func (x *StudentLoginResp) String() string {
 func (*StudentLoginResp) ProtoMessage() {}
 
 func (x *StudentLoginResp) ProtoReflect() protoreflect.Message {
-	mi := &file_v1_auth_auth_proto_msgTypes[3]
+	mi := &file_api_v1_auth_auth_proto_msgTypes[3]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -213,7 +221,7 @@ func (x *StudentLoginResp) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use StudentLoginResp.ProtoReflect.Descriptor instead.
 func (*StudentLoginResp) Descriptor() ([]byte, []int) {
-	return file_v1_auth_auth_proto_rawDescGZIP(), []int{3}
+	return file_api_v1_auth_auth_proto_rawDescGZIP(), []int{3}
 }
 
 func (x *StudentLoginResp) GetMessage() string {
@@ -234,13 +242,14 @@ type StudentData struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	StudentNo     string                 `protobuf:"bytes,1,opt,name=studentNo,proto3" json:"studentNo,omitempty"`
 	Name          string                 `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
+	Token         string                 `protobuf:"bytes,3,opt,name=token,proto3" json:"token,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
 func (x *StudentData) Reset() {
 	*x = StudentData{}
-	mi := &file_v1_auth_auth_proto_msgTypes[4]
+	mi := &file_api_v1_auth_auth_proto_msgTypes[4]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -252,7 +261,7 @@ func (x *StudentData) String() string {
 func (*StudentData) ProtoMessage() {}
 
 func (x *StudentData) ProtoReflect() protoreflect.Message {
-	mi := &file_v1_auth_auth_proto_msgTypes[4]
+	mi := &file_api_v1_auth_auth_proto_msgTypes[4]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -265,7 +274,7 @@ func (x *StudentData) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use StudentData.ProtoReflect.Descriptor instead.
 func (*StudentData) Descriptor() ([]byte, []int) {
-	return file_v1_auth_auth_proto_rawDescGZIP(), []int{4}
+	return file_api_v1_auth_auth_proto_rawDescGZIP(), []int{4}
 }
 
 func (x *StudentData) GetStudentNo() string {
@@ -282,6 +291,13 @@ func (x *StudentData) GetName() string {
 	return ""
 }
 
+func (x *StudentData) GetToken() string {
+	if x != nil {
+		return x.Token
+	}
+	return ""
+}
+
 type StudentInfoReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	StuNo         string                 `protobuf:"bytes,1,opt,name=stuNo,proto3" json:"stuNo,omitempty"`
@@ -291,7 +307,7 @@ type StudentInfoReq struct {
 
 func (x *StudentInfoReq) Reset() {
 	*x = StudentInfoReq{}
-	mi := &file_v1_auth_auth_proto_msgTypes[5]
+	mi := &file_api_v1_auth_auth_proto_msgTypes[5]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -303,7 +319,7 @@ func (x *StudentInfoReq) String() string {
 func (*StudentInfoReq) ProtoMessage() {}
 
 func (x *StudentInfoReq) ProtoReflect() protoreflect.Message {
-	mi := &file_v1_auth_auth_proto_msgTypes[5]
+	mi := &file_api_v1_auth_auth_proto_msgTypes[5]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -316,7 +332,7 @@ func (x *StudentInfoReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use StudentInfoReq.ProtoReflect.Descriptor instead.
 func (*StudentInfoReq) Descriptor() ([]byte, []int) {
-	return file_v1_auth_auth_proto_rawDescGZIP(), []int{5}
+	return file_api_v1_auth_auth_proto_rawDescGZIP(), []int{5}
 }
 
 func (x *StudentInfoReq) GetStuNo() string {
@@ -336,7 +352,7 @@ type StudentInfoResp struct {
 
 func (x *StudentInfoResp) Reset() {
 	*x = StudentInfoResp{}
-	mi := &file_v1_auth_auth_proto_msgTypes[6]
+	mi := &file_api_v1_auth_auth_proto_msgTypes[6]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -348,7 +364,7 @@ func (x *StudentInfoResp) String() string {
 func (*StudentInfoResp) ProtoMessage() {}
 
 func (x *StudentInfoResp) ProtoReflect() protoreflect.Message {
-	mi := &file_v1_auth_auth_proto_msgTypes[6]
+	mi := &file_api_v1_auth_auth_proto_msgTypes[6]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -361,7 +377,7 @@ func (x *StudentInfoResp) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use StudentInfoResp.ProtoReflect.Descriptor instead.
 func (*StudentInfoResp) Descriptor() ([]byte, []int) {
-	return file_v1_auth_auth_proto_rawDescGZIP(), []int{6}
+	return file_api_v1_auth_auth_proto_rawDescGZIP(), []int{6}
 }
 
 func (x *StudentInfoResp) GetMessage() string {
@@ -391,7 +407,7 @@ type StudentDetailInfo struct {
 
 func (x *StudentDetailInfo) Reset() {
 	*x = StudentDetailInfo{}
-	mi := &file_v1_auth_auth_proto_msgTypes[7]
+	mi := &file_api_v1_auth_auth_proto_msgTypes[7]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -403,7 +419,7 @@ func (x *StudentDetailInfo) String() string {
 func (*StudentDetailInfo) ProtoMessage() {}
 
 func (x *StudentDetailInfo) ProtoReflect() protoreflect.Message {
-	mi := &file_v1_auth_auth_proto_msgTypes[7]
+	mi := &file_api_v1_auth_auth_proto_msgTypes[7]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -416,7 +432,7 @@ func (x *StudentDetailInfo) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use StudentDetailInfo.ProtoReflect.Descriptor instead.
 func (*StudentDetailInfo) Descriptor() ([]byte, []int) {
-	return file_v1_auth_auth_proto_rawDescGZIP(), []int{7}
+	return file_api_v1_auth_auth_proto_rawDescGZIP(), []int{7}
 }
 
 func (x *StudentDetailInfo) GetId() uint32 {
@@ -454,26 +470,132 @@ func (x *StudentDetailInfo) GetIdCardNo() string {
 	return ""
 }
 
-var File_v1_auth_auth_proto protoreflect.FileDescriptor
+type AdminChangePasswordReq struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Username      string                 `protobuf:"bytes,1,opt,name=username,proto3" json:"username,omitempty"`
+	OldPassword   string                 `protobuf:"bytes,2,opt,name=oldPassword,proto3" json:"oldPassword,omitempty"`
+	NewPassword   string                 `protobuf:"bytes,3,opt,name=newPassword,proto3" json:"newPassword,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
 
-const file_v1_auth_auth_proto_rawDesc = "" +
+func (x *AdminChangePasswordReq) Reset() {
+	*x = AdminChangePasswordReq{}
+	mi := &file_api_v1_auth_auth_proto_msgTypes[8]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *AdminChangePasswordReq) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*AdminChangePasswordReq) ProtoMessage() {}
+
+func (x *AdminChangePasswordReq) ProtoReflect() protoreflect.Message {
+	mi := &file_api_v1_auth_auth_proto_msgTypes[8]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use AdminChangePasswordReq.ProtoReflect.Descriptor instead.
+func (*AdminChangePasswordReq) Descriptor() ([]byte, []int) {
+	return file_api_v1_auth_auth_proto_rawDescGZIP(), []int{8}
+}
+
+func (x *AdminChangePasswordReq) GetUsername() string {
+	if x != nil {
+		return x.Username
+	}
+	return ""
+}
+
+func (x *AdminChangePasswordReq) GetOldPassword() string {
+	if x != nil {
+		return x.OldPassword
+	}
+	return ""
+}
+
+func (x *AdminChangePasswordReq) GetNewPassword() string {
+	if x != nil {
+		return x.NewPassword
+	}
+	return ""
+}
+
+type AdminChangePasswordResp struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Message       string                 `protobuf:"bytes,1,opt,name=message,proto3" json:"message,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *AdminChangePasswordResp) Reset() {
+	*x = AdminChangePasswordResp{}
+	mi := &file_api_v1_auth_auth_proto_msgTypes[9]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *AdminChangePasswordResp) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*AdminChangePasswordResp) ProtoMessage() {}
+
+func (x *AdminChangePasswordResp) ProtoReflect() protoreflect.Message {
+	mi := &file_api_v1_auth_auth_proto_msgTypes[9]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use AdminChangePasswordResp.ProtoReflect.Descriptor instead.
+func (*AdminChangePasswordResp) Descriptor() ([]byte, []int) {
+	return file_api_v1_auth_auth_proto_rawDescGZIP(), []int{9}
+}
+
+func (x *AdminChangePasswordResp) GetMessage() string {
+	if x != nil {
+		return x.Message
+	}
+	return ""
+}
+
+var File_api_v1_auth_auth_proto protoreflect.FileDescriptor
+
+const file_api_v1_auth_auth_proto_rawDesc = "" +
 	"\n" +
-	"\x12v1/auth/auth.proto\x12\vapi.v1.auth\x1a\x1cgoogle/api/annotations.proto\"G\n" +
+	"\x16api/v1/auth/auth.proto\x12\vapi.v1.auth\x1a\x1cgoogle/api/annotations.proto\"G\n" +
 	"\rAdminLoginReq\x12\x1a\n" +
 	"\busername\x18\x01 \x01(\tR\busername\x12\x1a\n" +
-	"\bpassword\x18\x02 \x01(\tR\bpassword\"*\n" +
+	"\bpassword\x18\x02 \x01(\tR\bpassword\"@\n" +
 	"\x0eAdminLoginResp\x12\x18\n" +
-	"\amessage\x18\x01 \x01(\tR\amessage\"W\n" +
+	"\amessage\x18\x01 \x01(\tR\amessage\x12\x14\n" +
+	"\x05token\x18\x02 \x01(\tR\x05token\"W\n" +
 	"\x0fStudentLoginReq\x12\x14\n" +
 	"\x05stuNo\x18\x01 \x01(\tR\x05stuNo\x12\x16\n" +
 	"\x06cardNo\x18\x02 \x01(\tR\x06cardNo\x12\x16\n" +
 	"\x06taskId\x18\x03 \x01(\rR\x06taskId\"Z\n" +
 	"\x10StudentLoginResp\x12\x18\n" +
 	"\amessage\x18\x01 \x01(\tR\amessage\x12,\n" +
-	"\x04data\x18\x02 \x01(\v2\x18.api.v1.auth.StudentDataR\x04data\"?\n" +
+	"\x04data\x18\x02 \x01(\v2\x18.api.v1.auth.StudentDataR\x04data\"U\n" +
 	"\vStudentData\x12\x1c\n" +
 	"\tstudentNo\x18\x01 \x01(\tR\tstudentNo\x12\x12\n" +
-	"\x04name\x18\x02 \x01(\tR\x04name\"&\n" +
+	"\x04name\x18\x02 \x01(\tR\x04name\x12\x14\n" +
+	"\x05token\x18\x03 \x01(\tR\x05token\"&\n" +
 	"\x0eStudentInfoReq\x12\x14\n" +
 	"\x05stuNo\x18\x01 \x01(\tR\x05stuNo\"_\n" +
 	"\x0fStudentInfoResp\x12\x18\n" +
@@ -484,73 +606,84 @@ const file_v1_auth_auth_proto_rawDesc = "" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12\x10\n" +
 	"\x03sex\x18\x03 \x01(\tR\x03sex\x12\x1c\n" +
 	"\tstudentNo\x18\x04 \x01(\tR\tstudentNo\x12\x1a\n" +
-	"\bidCardNo\x18\x05 \x01(\tR\bidCardNo2\xd3\x02\n" +
+	"\bidCardNo\x18\x05 \x01(\tR\bidCardNo\"x\n" +
+	"\x16AdminChangePasswordReq\x12\x1a\n" +
+	"\busername\x18\x01 \x01(\tR\busername\x12 \n" +
+	"\voldPassword\x18\x02 \x01(\tR\voldPassword\x12 \n" +
+	"\vnewPassword\x18\x03 \x01(\tR\vnewPassword\"3\n" +
+	"\x17AdminChangePasswordResp\x12\x18\n" +
+	"\amessage\x18\x01 \x01(\tR\amessage2\xe5\x03\n" +
 	"\x04Auth\x12j\n" +
 	"\n" +
 	"AdminLogin\x12\x1a.api.v1.auth.AdminLoginReq\x1a\x1b.api.v1.auth.AdminLoginResp\"#\x82\xd3\xe4\x93\x02\x1d:\x01*\"\x18/api/v1/auth/admin/login\x12r\n" +
 	"\fStudentLogin\x12\x1c.api.v1.auth.StudentLoginReq\x1a\x1d.api.v1.auth.StudentLoginResp\"%\x82\xd3\xe4\x93\x02\x1f:\x01*\"\x1a/api/v1/auth/student/login\x12k\n" +
-	"\vStudentInfo\x12\x1b.api.v1.auth.StudentInfoReq\x1a\x1c.api.v1.auth.StudentInfoResp\"!\x82\xd3\xe4\x93\x02\x1b\x12\x19/api/v1/auth/student/infoB7\n" +
+	"\vStudentInfo\x12\x1b.api.v1.auth.StudentInfoReq\x1a\x1c.api.v1.auth.StudentInfoResp\"!\x82\xd3\xe4\x93\x02\x1b\x12\x19/api/v1/auth/student/info\x12\x8f\x01\n" +
+	"\x13AdminChangePassword\x12#.api.v1.auth.AdminChangePasswordReq\x1a$.api.v1.auth.AdminChangePasswordResp\"-\x82\xd3\xe4\x93\x02':\x01*\"\"/api/v1/auth/admin/change-passwordB7\n" +
 	"\vapi.v1.authP\x01Z&edu-evaluation-backed/api/v1/auth;authb\x06proto3"
 
 var (
-	file_v1_auth_auth_proto_rawDescOnce sync.Once
-	file_v1_auth_auth_proto_rawDescData []byte
+	file_api_v1_auth_auth_proto_rawDescOnce sync.Once
+	file_api_v1_auth_auth_proto_rawDescData []byte
 )
 
-func file_v1_auth_auth_proto_rawDescGZIP() []byte {
-	file_v1_auth_auth_proto_rawDescOnce.Do(func() {
-		file_v1_auth_auth_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_v1_auth_auth_proto_rawDesc), len(file_v1_auth_auth_proto_rawDesc)))
+func file_api_v1_auth_auth_proto_rawDescGZIP() []byte {
+	file_api_v1_auth_auth_proto_rawDescOnce.Do(func() {
+		file_api_v1_auth_auth_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_api_v1_auth_auth_proto_rawDesc), len(file_api_v1_auth_auth_proto_rawDesc)))
 	})
-	return file_v1_auth_auth_proto_rawDescData
+	return file_api_v1_auth_auth_proto_rawDescData
 }
 
-var file_v1_auth_auth_proto_msgTypes = make([]protoimpl.MessageInfo, 8)
-var file_v1_auth_auth_proto_goTypes = []any{
-	(*AdminLoginReq)(nil),     // 0: api.v1.auth.AdminLoginReq
-	(*AdminLoginResp)(nil),    // 1: api.v1.auth.AdminLoginResp
-	(*StudentLoginReq)(nil),   // 2: api.v1.auth.StudentLoginReq
-	(*StudentLoginResp)(nil),  // 3: api.v1.auth.StudentLoginResp
-	(*StudentData)(nil),       // 4: api.v1.auth.StudentData
-	(*StudentInfoReq)(nil),    // 5: api.v1.auth.StudentInfoReq
-	(*StudentInfoResp)(nil),   // 6: api.v1.auth.StudentInfoResp
-	(*StudentDetailInfo)(nil), // 7: api.v1.auth.StudentDetailInfo
+var file_api_v1_auth_auth_proto_msgTypes = make([]protoimpl.MessageInfo, 10)
+var file_api_v1_auth_auth_proto_goTypes = []any{
+	(*AdminLoginReq)(nil),           // 0: api.v1.auth.AdminLoginReq
+	(*AdminLoginResp)(nil),          // 1: api.v1.auth.AdminLoginResp
+	(*StudentLoginReq)(nil),         // 2: api.v1.auth.StudentLoginReq
+	(*StudentLoginResp)(nil),        // 3: api.v1.auth.StudentLoginResp
+	(*StudentData)(nil),             // 4: api.v1.auth.StudentData
+	(*StudentInfoReq)(nil),          // 5: api.v1.auth.StudentInfoReq
+	(*StudentInfoResp)(nil),         // 6: api.v1.auth.StudentInfoResp
+	(*StudentDetailInfo)(nil),       // 7: api.v1.auth.StudentDetailInfo
+	(*AdminChangePasswordReq)(nil),  // 8: api.v1.auth.AdminChangePasswordReq
+	(*AdminChangePasswordResp)(nil), // 9: api.v1.auth.AdminChangePasswordResp
 }
-var file_v1_auth_auth_proto_depIdxs = []int32{
+var file_api_v1_auth_auth_proto_depIdxs = []int32{
 	4, // 0: api.v1.auth.StudentLoginResp.data:type_name -> api.v1.auth.StudentData
 	7, // 1: api.v1.auth.StudentInfoResp.data:type_name -> api.v1.auth.StudentDetailInfo
 	0, // 2: api.v1.auth.Auth.AdminLogin:input_type -> api.v1.auth.AdminLoginReq
 	2, // 3: api.v1.auth.Auth.StudentLogin:input_type -> api.v1.auth.StudentLoginReq
 	5, // 4: api.v1.auth.Auth.StudentInfo:input_type -> api.v1.auth.StudentInfoReq
-	1, // 5: api.v1.auth.Auth.AdminLogin:output_type -> api.v1.auth.AdminLoginResp
-	3, // 6: api.v1.auth.Auth.StudentLogin:output_type -> api.v1.auth.StudentLoginResp
-	6, // 7: api.v1.auth.Auth.StudentInfo:output_type -> api.v1.auth.StudentInfoResp
-	5, // [5:8] is the sub-list for method output_type
-	2, // [2:5] is the sub-list for method input_type
+	8, // 5: api.v1.auth.Auth.AdminChangePassword:input_type -> api.v1.auth.AdminChangePasswordReq
+	1, // 6: api.v1.auth.Auth.AdminLogin:output_type -> api.v1.auth.AdminLoginResp
+	3, // 7: api.v1.auth.Auth.StudentLogin:output_type -> api.v1.auth.StudentLoginResp
+	6, // 8: api.v1.auth.Auth.StudentInfo:output_type -> api.v1.auth.StudentInfoResp
+	9, // 9: api.v1.auth.Auth.AdminChangePassword:output_type -> api.v1.auth.AdminChangePasswordResp
+	6, // [6:10] is the sub-list for method output_type
+	2, // [2:6] is the sub-list for method input_type
 	2, // [2:2] is the sub-list for extension type_name
 	2, // [2:2] is the sub-list for extension extendee
 	0, // [0:2] is the sub-list for field type_name
 }
 
-func init() { file_v1_auth_auth_proto_init() }
-func file_v1_auth_auth_proto_init() {
-	if File_v1_auth_auth_proto != nil {
+func init() { file_api_v1_auth_auth_proto_init() }
+func file_api_v1_auth_auth_proto_init() {
+	if File_api_v1_auth_auth_proto != nil {
 		return
 	}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
-			RawDescriptor: unsafe.Slice(unsafe.StringData(file_v1_auth_auth_proto_rawDesc), len(file_v1_auth_auth_proto_rawDesc)),
+			RawDescriptor: unsafe.Slice(unsafe.StringData(file_api_v1_auth_auth_proto_rawDesc), len(file_api_v1_auth_auth_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   8,
+			NumMessages:   10,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
-		GoTypes:           file_v1_auth_auth_proto_goTypes,
-		DependencyIndexes: file_v1_auth_auth_proto_depIdxs,
-		MessageInfos:      file_v1_auth_auth_proto_msgTypes,
+		GoTypes:           file_api_v1_auth_auth_proto_goTypes,
+		DependencyIndexes: file_api_v1_auth_auth_proto_depIdxs,
+		MessageInfos:      file_api_v1_auth_auth_proto_msgTypes,
 	}.Build()
-	File_v1_auth_auth_proto = out.File
-	file_v1_auth_auth_proto_goTypes = nil
-	file_v1_auth_auth_proto_depIdxs = nil
+	File_api_v1_auth_auth_proto = out.File
+	file_api_v1_auth_auth_proto_goTypes = nil
+	file_api_v1_auth_auth_proto_depIdxs = nil
 }

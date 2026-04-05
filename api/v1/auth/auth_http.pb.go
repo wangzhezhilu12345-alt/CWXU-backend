@@ -2,7 +2,7 @@
 // versions:
 // - protoc-gen-go-http v2.9.2
 // - protoc             v6.33.1
-// source: v1/auth/auth.proto
+// source: api/v1/auth/auth.proto
 
 package auth
 
@@ -19,11 +19,13 @@ var _ = binding.EncodeURL
 
 const _ = http.SupportPackageIsVersion1
 
+const OperationAuthAdminChangePassword = "/api.v1.auth.Auth/AdminChangePassword"
 const OperationAuthAdminLogin = "/api.v1.auth.Auth/AdminLogin"
 const OperationAuthStudentInfo = "/api.v1.auth.Auth/StudentInfo"
 const OperationAuthStudentLogin = "/api.v1.auth.Auth/StudentLogin"
 
 type AuthHTTPServer interface {
+	AdminChangePassword(context.Context, *AdminChangePasswordReq) (*AdminChangePasswordResp, error)
 	AdminLogin(context.Context, *AdminLoginReq) (*AdminLoginResp, error)
 	StudentInfo(context.Context, *StudentInfoReq) (*StudentInfoResp, error)
 	StudentLogin(context.Context, *StudentLoginReq) (*StudentLoginResp, error)
@@ -34,6 +36,7 @@ func RegisterAuthHTTPServer(s *http.Server, srv AuthHTTPServer) {
 	r.POST("/api/v1/auth/admin/login", _Auth_AdminLogin0_HTTP_Handler(srv))
 	r.POST("/api/v1/auth/student/login", _Auth_StudentLogin0_HTTP_Handler(srv))
 	r.GET("/api/v1/auth/student/info", _Auth_StudentInfo0_HTTP_Handler(srv))
+	r.POST("/api/v1/auth/admin/change-password", _Auth_AdminChangePassword0_HTTP_Handler(srv))
 }
 
 func _Auth_AdminLogin0_HTTP_Handler(srv AuthHTTPServer) func(ctx http.Context) error {
@@ -99,7 +102,30 @@ func _Auth_StudentInfo0_HTTP_Handler(srv AuthHTTPServer) func(ctx http.Context) 
 	}
 }
 
+func _Auth_AdminChangePassword0_HTTP_Handler(srv AuthHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in AdminChangePasswordReq
+		if err := ctx.Bind(&in); err != nil {
+			return err
+		}
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationAuthAdminChangePassword)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.AdminChangePassword(ctx, req.(*AdminChangePasswordReq))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*AdminChangePasswordResp)
+		return ctx.Result(200, reply)
+	}
+}
+
 type AuthHTTPClient interface {
+	AdminChangePassword(ctx context.Context, req *AdminChangePasswordReq, opts ...http.CallOption) (rsp *AdminChangePasswordResp, err error)
 	AdminLogin(ctx context.Context, req *AdminLoginReq, opts ...http.CallOption) (rsp *AdminLoginResp, err error)
 	StudentInfo(ctx context.Context, req *StudentInfoReq, opts ...http.CallOption) (rsp *StudentInfoResp, err error)
 	StudentLogin(ctx context.Context, req *StudentLoginReq, opts ...http.CallOption) (rsp *StudentLoginResp, err error)
@@ -111,6 +137,19 @@ type AuthHTTPClientImpl struct {
 
 func NewAuthHTTPClient(client *http.Client) AuthHTTPClient {
 	return &AuthHTTPClientImpl{client}
+}
+
+func (c *AuthHTTPClientImpl) AdminChangePassword(ctx context.Context, in *AdminChangePasswordReq, opts ...http.CallOption) (*AdminChangePasswordResp, error) {
+	var out AdminChangePasswordResp
+	pattern := "/api/v1/auth/admin/change-password"
+	path := binding.EncodeURL(pattern, in, false)
+	opts = append(opts, http.Operation(OperationAuthAdminChangePassword))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "POST", path, in, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, nil
 }
 
 func (c *AuthHTTPClientImpl) AdminLogin(ctx context.Context, in *AdminLoginReq, opts ...http.CallOption) (*AdminLoginResp, error) {

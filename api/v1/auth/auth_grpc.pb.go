@@ -2,7 +2,7 @@
 // versions:
 // - protoc-gen-go-grpc v1.6.1
 // - protoc             v6.33.1
-// source: v1/auth/auth.proto
+// source: api/v1/auth/auth.proto
 
 package auth
 
@@ -19,9 +19,10 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	Auth_AdminLogin_FullMethodName   = "/api.v1.auth.Auth/AdminLogin"
-	Auth_StudentLogin_FullMethodName = "/api.v1.auth.Auth/StudentLogin"
-	Auth_StudentInfo_FullMethodName  = "/api.v1.auth.Auth/StudentInfo"
+	Auth_AdminLogin_FullMethodName          = "/api.v1.auth.Auth/AdminLogin"
+	Auth_StudentLogin_FullMethodName        = "/api.v1.auth.Auth/StudentLogin"
+	Auth_StudentInfo_FullMethodName         = "/api.v1.auth.Auth/StudentInfo"
+	Auth_AdminChangePassword_FullMethodName = "/api.v1.auth.Auth/AdminChangePassword"
 )
 
 // AuthClient is the client API for Auth service.
@@ -31,6 +32,7 @@ type AuthClient interface {
 	AdminLogin(ctx context.Context, in *AdminLoginReq, opts ...grpc.CallOption) (*AdminLoginResp, error)
 	StudentLogin(ctx context.Context, in *StudentLoginReq, opts ...grpc.CallOption) (*StudentLoginResp, error)
 	StudentInfo(ctx context.Context, in *StudentInfoReq, opts ...grpc.CallOption) (*StudentInfoResp, error)
+	AdminChangePassword(ctx context.Context, in *AdminChangePasswordReq, opts ...grpc.CallOption) (*AdminChangePasswordResp, error)
 }
 
 type authClient struct {
@@ -71,6 +73,16 @@ func (c *authClient) StudentInfo(ctx context.Context, in *StudentInfoReq, opts .
 	return out, nil
 }
 
+func (c *authClient) AdminChangePassword(ctx context.Context, in *AdminChangePasswordReq, opts ...grpc.CallOption) (*AdminChangePasswordResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(AdminChangePasswordResp)
+	err := c.cc.Invoke(ctx, Auth_AdminChangePassword_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // AuthServer is the server API for Auth service.
 // All implementations must embed UnimplementedAuthServer
 // for forward compatibility.
@@ -78,6 +90,7 @@ type AuthServer interface {
 	AdminLogin(context.Context, *AdminLoginReq) (*AdminLoginResp, error)
 	StudentLogin(context.Context, *StudentLoginReq) (*StudentLoginResp, error)
 	StudentInfo(context.Context, *StudentInfoReq) (*StudentInfoResp, error)
+	AdminChangePassword(context.Context, *AdminChangePasswordReq) (*AdminChangePasswordResp, error)
 	mustEmbedUnimplementedAuthServer()
 }
 
@@ -96,6 +109,9 @@ func (UnimplementedAuthServer) StudentLogin(context.Context, *StudentLoginReq) (
 }
 func (UnimplementedAuthServer) StudentInfo(context.Context, *StudentInfoReq) (*StudentInfoResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method StudentInfo not implemented")
+}
+func (UnimplementedAuthServer) AdminChangePassword(context.Context, *AdminChangePasswordReq) (*AdminChangePasswordResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method AdminChangePassword not implemented")
 }
 func (UnimplementedAuthServer) mustEmbedUnimplementedAuthServer() {}
 func (UnimplementedAuthServer) testEmbeddedByValue()              {}
@@ -172,6 +188,24 @@ func _Auth_StudentInfo_Handler(srv interface{}, ctx context.Context, dec func(in
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Auth_AdminChangePassword_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AdminChangePasswordReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AuthServer).AdminChangePassword(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Auth_AdminChangePassword_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AuthServer).AdminChangePassword(ctx, req.(*AdminChangePasswordReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Auth_ServiceDesc is the grpc.ServiceDesc for Auth service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -191,7 +225,11 @@ var Auth_ServiceDesc = grpc.ServiceDesc{
 			MethodName: "StudentInfo",
 			Handler:    _Auth_StudentInfo_Handler,
 		},
+		{
+			MethodName: "AdminChangePassword",
+			Handler:    _Auth_AdminChangePassword_Handler,
+		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "v1/auth/auth.proto",
+	Metadata: "api/v1/auth/auth.proto",
 }
