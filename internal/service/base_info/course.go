@@ -67,6 +67,10 @@ func (c CourseService) Detail(ctx context.Context, req *course.GetCourseDetailRe
 
 // Edit 编辑课程信息
 func (c CourseService) Edit(ctx context.Context, req *course.EditCourseReq) (*course.EditCourseResp, error) {
+	if active, _ := c.baseDal.HasActiveEvaluationTask(); active {
+		return nil, errors.New("评教任务正在进行中，无法修改基础数据")
+	}
+
 	if req.CourseId == 0 {
 		return nil, errors.New("课程ID不能为空")
 	}

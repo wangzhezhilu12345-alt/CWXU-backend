@@ -2,6 +2,8 @@
 package base_info
 
 import (
+	"errors"
+
 	"edu-evaluation-backed/internal/data/dal"
 	"edu-evaluation-backed/internal/data/model"
 	"mime/multipart"
@@ -60,6 +62,9 @@ func (s StudentUseCase) ImportStudent(f multipart.File) error {
 // 参数 id 为目标学生的主键 ID；name、sex、studentNo、idCardNo 为需要更新的字段指针，传 nil 表示不更新该字段。
 // 返回更新后的学生对象和可能的错误。
 func (s StudentUseCase) UpdateStudent(id uint, name, sex, studentNo, idCardNo *string) (*model.Student, error) {
+	if active, _ := s.studentDal.HasActiveEvaluationTask(); active {
+		return nil, errors.New("评教任务正在进行中，无法修改基础数据")
+	}
 	return s.studentDal.UpdateStudent(id, name, sex, studentNo, idCardNo)
 }
 
@@ -67,6 +72,9 @@ func (s StudentUseCase) UpdateStudent(id uint, name, sex, studentNo, idCardNo *s
 // 参数 id 为目标学生的主键 ID。
 // 删除成功返回 nil，否则返回对应的错误。
 func (s StudentUseCase) DeleteStudent(id uint) error {
+	if active, _ := s.studentDal.HasActiveEvaluationTask(); active {
+		return errors.New("评教任务正在进行中，无法修改基础数据")
+	}
 	return s.studentDal.DeleteStudent(id)
 }
 

@@ -68,6 +68,16 @@ func (e EvaTaskUseCase) ChangeTaskStatus(taskID uint, status int) error {
 	}
 
 	if oldStatus == 2 && status == 0 {
+		// 清理 zip 文件
+		zipPath, _ := e.taskDal.GetTaskZipPath(taskID)
+		if zipPath != "" {
+			exePath, _ := os.Executable()
+			baseDir := filepath.Dir(exePath)
+			fullPath := filepath.Join(baseDir, zipPath)
+			os.Remove(fullPath)
+			_ = e.taskDal.ClearTaskZipPath(taskID)
+		}
+
 		courseIDs := make([]uint, 0, len(task.Courses))
 		for _, course := range task.Courses {
 			courseIDs = append(courseIDs, course.ID)
@@ -111,6 +121,20 @@ func (e EvaTaskUseCase) GetTaskEvaluationResults(taskID uint) ([]dal.TeacherEval
 
 // ExportTaskResults 导出任务评教结果
 func (e EvaTaskUseCase) ExportTaskResults(taskID uint) (*ExportResult, error) {
+	// 检查是否已有缓存的 zip
+	existingZip, err := e.taskDal.GetTaskZipPath(taskID)
+	if err == nil && existingZip != "" {
+		// 检查文件是否真实存在
+		exePath, _ := os.Executable()
+		baseDir := filepath.Dir(exePath)
+		fullPath := filepath.Join(baseDir, existingZip)
+		if _, err := os.Stat(fullPath); err == nil {
+			return &ExportResult{
+				ZipPath: existingZip,
+			}, nil
+		}
+	}
+
 	exePath, _ := os.Executable()
 	baseDir := filepath.Dir(exePath)
 	tmpDir := filepath.Join(baseDir, "tmp")
@@ -147,10 +171,14 @@ func (e EvaTaskUseCase) ExportTaskResults(taskID uint) (*ExportResult, error) {
 		return nil, err
 	}
 
+	// 保存 zip 路径到数据库
+	relativePath := fmt.Sprintf("res/%s", zipName)
+	_ = e.taskDal.SetTaskZipPath(taskID, relativePath)
+
 	return &ExportResult{
 		XlsxPath: xlsxPath,
 		PdfPaths: pdfPaths,
-		ZipPath:  fmt.Sprintf("res/%s", zipName),
+		ZipPath:  relativePath,
 	}, nil
 }
 

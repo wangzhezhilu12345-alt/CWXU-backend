@@ -186,33 +186,40 @@ func (b *BaseDal) InsertTeacher(teachers []*model.Teacher) error {
 	return b.InsertBatch(teachers, "work_no")
 }
 
+// HasActiveEvaluationTask 检查是否存在进行中的评教任务（status=1）
+func (b *BaseDal) HasActiveEvaluationTask() (bool, error) {
+	var count int64
+	err := b.db.Model(&model.EvaluationTask{}).Where("status = 1").Count(&count).Error
+	return count > 0, err
+}
+
 // ResetAll 清空所有数据，只保留学生表和教师表（硬删除）
 // 清空: evaluation_details, evaluation_courses, evaluation_tasks, course_teachers, course_students, courses
 func (b *BaseDal) ResetAll() error {
 	return b.db.Transaction(func(tx *gorm.DB) error {
 		// 先删子表，再删关联表，最后删父表
-		// 1. 删评教详情（最底层子表）
-		if err := tx.Exec("DELETE FROM evaluation_details").Error; err != nil {
+		// 1. 删评教详情（最底层子表）— 有 GORM model，用 Unscoped 硬删除
+		if err := tx.Unscoped().Where("1 = 1").Delete(&model.EvaluationDetail{}).Error; err != nil {
 			return err
 		}
-		// 2. 删 evaluation_courses（在评教任务之前，因为有外键引用）
+		// 2. 删 evaluation_courses（中间表，无 GORM model，用原生 SQL）
 		if err := tx.Exec("DELETE FROM evaluation_courses").Error; err != nil {
 			return err
 		}
-		// 3. 删评教任务
-		if err := tx.Exec("DELETE FROM evaluation_tasks").Error; err != nil {
+		// 3. 删评教任务 — 有 GORM model，用 Unscoped 硬删除
+		if err := tx.Unscoped().Where("1 = 1").Delete(&model.EvaluationTask{}).Error; err != nil {
 			return err
 		}
-		// 4. 删课程和教师的关联表
+		// 4. 删课程和教师的关联表（中间表，无 GORM model，用原生 SQL）
 		if err := tx.Exec("DELETE FROM course_teachers").Error; err != nil {
 			return err
 		}
-		// 5. 删课程和学生的关联表
+		// 5. 删课程和学生的关联表（中间表，无 GORM model，用原生 SQL）
 		if err := tx.Exec("DELETE FROM course_students").Error; err != nil {
 			return err
 		}
-		// 6. 删课程表
-		if err := tx.Exec("DELETE FROM courses").Error; err != nil {
+		// 6. 删课程表 — 有 GORM model，用 Unscoped 硬删除
+		if err := tx.Unscoped().Where("1 = 1").Delete(&model.Course{}).Error; err != nil {
 			return err
 		}
 		return nil

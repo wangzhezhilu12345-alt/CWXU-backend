@@ -8,6 +8,7 @@ const (
 	PrefixEval     = "edu_eval:eval"
 	PrefixCourse   = "edu_eval:course"
 	PrefixLogin    = "edu_eval:login"
+	PrefixQuestion = "edu_eval:question"
 )
 
 // 任务列表 Key: edu_eval:task:list:{status}:{page}:{size}
@@ -48,4 +49,9 @@ func EvalCheckPattern(taskID uint, studentNo string) string {
 // 课程详情通配符: edu_eval:course:detail:*
 func CourseDetailPattern() string {
 	return fmt.Sprintf("%s:detail:*", PrefixCourse)
+}
+
+// 评教问题列表: edu_eval:question:list
+func QuestionListKey() string {
+	return fmt.Sprintf("%s:list", PrefixQuestion)
 }

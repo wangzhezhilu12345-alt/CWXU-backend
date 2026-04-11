@@ -34,9 +34,10 @@ func (d *TaskDal) CreateTask(title string, courses []model.Course) (uint, error)
 	if err != nil {
 		return 0, err
 	}
+	// 清除任务列表缓存
+	go cache.DeleteByPattern(context.Background(), d.rdb, d.hc, cache.TaskListPattern())
 	return task.ID, nil
 }
-
 // taskListResult 任务列表缓存数据
 type taskListResult struct {
 	Tasks []model.EvaluationTask `json:"tasks"`
@@ -319,6 +320,25 @@ type TeacherEvaluationDetail struct {
 	TotalTeachers int
 	Comments     []string
 	Summaries    []string
+}
+
+// GetTaskEvaluationResults 获取任务下所有教师的评教结果
+
+// GetTaskZipPath 查询任务的 zip 路径
+func (d *TaskDal) GetTaskZipPath(taskID uint) (string, error) {
+	var task model.EvaluationTask
+	err := d.db.Select("zip_path").Where("id = ?", taskID).First(&task).Error
+	return task.ZipPath, err
+}
+
+// SetTaskZipPath 设置任务的 zip 路径
+func (d *TaskDal) SetTaskZipPath(taskID uint, zipPath string) error {
+	return d.db.Model(&model.EvaluationTask{}).Where("id = ?", taskID).Update("zip_path", zipPath).Error
+}
+
+// ClearTaskZipPath 清空任务的 zip 路径
+func (d *TaskDal) ClearTaskZipPath(taskID uint) error {
+	return d.db.Model(&model.EvaluationTask{}).Where("id = ?", taskID).Update("zip_path", "").Error
 }
 
 // GetTaskEvaluationResults 获取任务下所有教师的评教结果

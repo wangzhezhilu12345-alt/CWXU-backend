@@ -98,6 +98,7 @@ func migrateModels(db *gorm.DB) {
 		&model.Course{},
 		&model.EvaluationTask{},
 		&model.EvaluationDetail{},
+		&model.EvaluationQuestion{},
 	)
 	if err != nil {
 		panic("数据库：数据库自动合并失败" + err.Error())

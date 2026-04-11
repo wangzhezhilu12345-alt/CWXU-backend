@@ -4,6 +4,7 @@ import (
 	"edu-evaluation-backed/internal/biz/auth"
 	"edu-evaluation-backed/internal/biz/base_info"
 	"edu-evaluation-backed/internal/biz/eva_task"
+	"edu-evaluation-backed/internal/biz/eva_question"
 
 	"github.com/google/wire"
 )
@@ -15,4 +16,5 @@ var ProviderSet = wire.NewSet(
 	base_info.NewTeacherUseCase,
 	base_info.NewCourseUseCase,
 	eva_task.NewEvaTaskUseCase,
+	eva_question.NewQuestionUseCase,
 )

@@ -65,10 +65,9 @@ func (d *BaseInfoDal) InsertTeacher(teachers []*model.Teacher) error {
 		}).Create(teachers).Error
 }
 
-// QueryTeacher 查询教师列表，支持分页和模糊搜索
+// QueryTeacher 查询教师列表，支持分页和模糊搜索（page=-1 时返回全部）
 func (d *BaseInfoDal) QueryTeacher(page, size int, workNo, name string) (*[]model.Teacher, int64, error) {
 	var teachers []model.Teacher
-	page, size = utils.PageNumHandle(page, size)
 	var tot int64
 	query := d.db.Model(&model.Teacher{})
 	if workNo != "" {
@@ -77,6 +76,11 @@ func (d *BaseInfoDal) QueryTeacher(page, size int, workNo, name string) (*[]mode
 	if name != "" {
 		query = query.Where("name LIKE ?", "%"+name+"%")
 	}
+	if page == -1 {
+		err := query.Count(&tot).Order("id desc").Find(&teachers).Error
+		return &teachers, tot, err
+	}
+	page, size = utils.PageNumHandle(page, size)
 	err := query.Count(&tot).Limit(size).Offset(utils.CalculateOffset(page, size)).Order("id desc").Find(&teachers).Error
 	return &teachers, tot, err
 }
@@ -259,4 +263,11 @@ func (d *BaseInfoDal) AdminChangePassword(username, oldPassword, newPassword str
 		return errors.New("用户名或旧密码错误")
 	}
 	return d.db.Model(&admin).Update("password", newPassword).Error
+}
+
+// HasActiveEvaluationTask 检查是否存在进行中的评教任务（status=1）
+func (d *BaseInfoDal) HasActiveEvaluationTask() (bool, error) {
+	var count int64
+	err := d.db.Model(&model.EvaluationTask{}).Where("status = 1").Count(&count).Error
+	return count > 0, err
 }

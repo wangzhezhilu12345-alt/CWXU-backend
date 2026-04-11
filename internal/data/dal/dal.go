@@ -2,4 +2,4 @@ package dal
 
 import "github.com/google/wire"
 
-var ProviderSet = wire.NewSet(NewBaseInfoDal, NewCourseDal, NewTaskDal, NewBaseDal)
+var ProviderSet = wire.NewSet(NewBaseInfoDal, NewCourseDal, NewTaskDal, NewBaseDal, NewQuestionDal)

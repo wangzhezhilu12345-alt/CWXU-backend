@@ -26,6 +26,7 @@ type EvaluationTask struct {
 	gorm.Model
 	Status  int                `json:"status" gorm:"comment:评教状态 0-未开始 1-进行中 2-已结束"`
 	Title   string             `json:"title" gorm:"size:128;comment:评教标题"`
+	ZipPath string             `json:"zip_path" gorm:"size:256;comment:导出zip路径"`
 	Courses []Course           `json:"courses" gorm:"many2many:evaluation_courses;comment:参与评教的课程"`
 	Details []EvaluationDetail `json:"details" gorm:"foreignKey:TaskId;comment:评教详情"`
 }
@@ -71,4 +72,12 @@ type EvaluationDetail struct {
 	Detail  string  `json:"detail" gorm:"type:text;comment:学生评价的json信息"`
 	Summary string  `json:"summary" gorm:"type:text;comment:学生总结信息"`
 	Score   int     `json:"score" gorm:"comment:本次评价折算后的总分"`
+}
+
+// EvaluationQuestion 评教问题
+type EvaluationQuestion struct {
+	gorm.Model
+	Content string `json:"content" gorm:"size:512;comment:问题内容"`
+	Score   int    `json:"score" gorm:"comment:该问题对应分数"`
+	Sort    int    `json:"sort" gorm:"default:0;comment:排序序号"`
 }

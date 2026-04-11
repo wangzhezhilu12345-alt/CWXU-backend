@@ -2,9 +2,11 @@
 package base_info
 
 import (
-	"edu-evaluation-backed/internal/data/dal"
+	"errors"
 	"fmt"
 	"mime/multipart"
+
+	"edu-evaluation-backed/internal/data/dal"
 
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/xuri/excelize/v2"
@@ -12,7 +14,8 @@ import (
 
 // CourseUseCase 课程信息业务用例，负责课程数据的导入、删除等业务操作。
 type CourseUseCase struct {
-	courseDal *dal.CourseDal
+	courseDal  *dal.CourseDal
+	baseInfoDal *dal.BaseInfoDal
 }
 
 // courseItem 课程分组键，用于按课程名称和班级名称进行分组。
@@ -25,6 +28,10 @@ type courseItem struct {
 // 解析 Excel 中的 Sheet1，按课程名称和班级名称分组后批量创建课程并关联学生。
 // 返回导入过程中的错误信息汇总字符串；无错误时返回空字符串。
 func (c CourseUseCase) Import(f multipart.File) string {
+	if active, _ := c.baseInfoDal.HasActiveEvaluationTask(); active {
+		return "评教任务正在进行中，无法修改基础数据"
+	}
+
 	list, err := excelize.OpenReader(f)
 	if err != nil {
 		return err.Error()
@@ -63,11 +70,14 @@ func (c CourseUseCase) Import(f multipart.File) string {
 // 参数 id 为目标课程的主键 ID。
 // 删除成功返回 nil，否则返回对应的错误。
 func (c CourseUseCase) DeleteCourse(id uint) error {
+	if active, _ := c.baseInfoDal.HasActiveEvaluationTask(); active {
+		return errors.New("评教任务正在进行中，无法修改基础数据")
+	}
 	return c.courseDal.DeleteCourse(id)
 }
 
 // NewCourseUseCase 创建并返回 CourseUseCase 实例。
-// 参数 courseDal 为课程数据访问层对象。
-func NewCourseUseCase(courseDal *dal.CourseDal) *CourseUseCase {
-	return &CourseUseCase{courseDal: courseDal}
+// 参数 courseDal 为课程数据访问层对象，baseInfoDal 为基础信息数据访问层对象。
+func NewCourseUseCase(courseDal *dal.CourseDal, baseInfoDal *dal.BaseInfoDal) *CourseUseCase {
+	return &CourseUseCase{courseDal: courseDal, baseInfoDal: baseInfoDal}
 }

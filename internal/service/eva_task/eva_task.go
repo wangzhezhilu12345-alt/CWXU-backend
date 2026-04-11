@@ -131,7 +131,7 @@ func (e EvaTaskService) Detail(ctx context.Context, req *eva_task2.GetTaskReq) (
 			Name:            course.CourseName + " - " + course.ClassName,
 			EvaluationScore: int32(course.EvaluationScore),
 			EvaluationNum:   int32(course.EvaluationNum),
-			TotalNum:        int32(len(course.Students)),
+			TotalNum:        int32(len(course.Students) * len(course.Teachers)),
 		}
 		courses = append(courses, courseInfo)
 	}

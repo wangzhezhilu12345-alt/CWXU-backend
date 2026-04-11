@@ -8,10 +8,12 @@ import (
 	"edu-evaluation-backed/api/v1/base_info/course"
 	"edu-evaluation-backed/api/v1/base_info/student"
 	"edu-evaluation-backed/api/v1/base_info/teacher"
+	eva_question2 "edu-evaluation-backed/api/v1/eva_question"
 	eva_task2 "edu-evaluation-backed/api/v1/eva_task"
 	"edu-evaluation-backed/internal/conf"
 	authSvc "edu-evaluation-backed/internal/service/auth"
 	"edu-evaluation-backed/internal/service/base_info"
+	"edu-evaluation-backed/internal/service/eva_question"
 	"edu-evaluation-backed/internal/service/eva_task"
 
 	"github.com/go-kratos/kratos/v2/log"
@@ -28,9 +30,10 @@ var jwtSecretKey = []byte("edu-evaluation-secret-key")
 
 // whitelistOperations 不需要 JWT 校验的 operation 列表
 var whitelistOperations = map[string]bool{
-	"/api.v1.auth.Auth/AdminLogin":   true,
-	"/api.v1.auth.Auth/StudentLogin": true,
-	"/api.v1.eva_task.Task/List":     true,
+	"/api.v1.auth.Auth/AdminLogin":         true,
+	"/api.v1.auth.Auth/StudentLogin":       true,
+	"/api.v1.eva_task.Task/List":           true,
+	"/api.v1.eva_question.Question/ListQuestions": true,
 }
 
 // whitelistMatcher 白名单匹配：白名单 operation 返回 false（不应用 JWT 中间件），其余返回 true
@@ -45,6 +48,7 @@ func NewHTTPServer(c *conf.Server,
 	teacherService *base_info.TeacherService,
 	courseService *base_info.CourseService,
 	evaService *eva_task.EvaTaskService,
+	questionService *eva_question.QuestionService,
 	logger log.Logger,
 ) *khttp.Server {
 	var opts = []khttp.ServerOption{
@@ -78,6 +82,7 @@ func NewHTTPServer(c *conf.Server,
 	teacher_i.RegisterTeacherHTTPServer(srv, teacherService)
 	course.RegisterCourseHTTPServer(srv, courseService)
 	eva_task2.RegisterTaskHTTPServer(srv, evaService)
+	eva_question2.RegisterQuestionHTTPServer(srv, questionService)
 
 	// 静态文件下载 - 使用可执行文件所在目录
 	router := mux.NewRouter()

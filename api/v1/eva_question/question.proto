@@ -1,0 +1,43 @@
+syntax = "proto3";
+
+package api.v1.eva_question;
+
+import "google/api/annotations.proto";
+
+option go_package = "edu-evaluation-backed/api/v1/eva_question;eva_question";
+
+service Question {
+  rpc ListQuestions(ListQuestionsReq) returns (ListQuestionsResp) {
+    option (google.api.http) = {
+      get: "/api/v1/question/list"
+    };
+  }
+  rpc UpdateQuestions(UpdateQuestionsReq) returns (UpdateQuestionsResp) {
+    option (google.api.http) = {
+      post: "/api/v1/question/update"
+      body: "*"
+    };
+  }
+}
+
+message QuestionItem {
+  uint32 id = 1;
+  string content = 2;
+  int32 score = 3;
+  int32 sort = 4;
+}
+
+message ListQuestionsReq {}
+
+message ListQuestionsResp {
+  string message = 1;
+  repeated QuestionItem data = 2;
+}
+
+message UpdateQuestionsReq {
+  repeated QuestionItem questions = 1;
+}
+
+message UpdateQuestionsResp {
+  string message = 1;
+}
